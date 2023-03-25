@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,9 @@ import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
 fun DragDropScreen(
     mainViewModel: MainViewModel
 ){
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+
     // Agrupar las tareas por estado
     val columnByStatus = mainViewModel.columnsItems.groupBy { it }
 
@@ -90,7 +94,9 @@ fun DragDropScreen(
                                 Card(
                                     backgroundColor = task.backgroundColor,
                                     modifier = Modifier
-                                        .fillMaxWidth()
+                                        .width(Dp(screenWidth / 2f))
+                                        .height(Dp(screenWidth / 3f))
+                                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(15.dp))
                                         .padding(8.dp)
                                 ) {
                                     Column(Modifier.padding(16.dp)) {
@@ -139,7 +145,8 @@ fun DragDropScreen(
                                 Card(
                                     backgroundColor = task.backgroundColor,
                                     modifier = Modifier
-                                        .fillMaxWidth()
+                                        .width(Dp(screenWidth / 2f))
+                                        .height(Dp(screenWidth / 3f))
                                         .padding(8.dp)
                                 ) {
                                     Column(Modifier.padding(16.dp)) {

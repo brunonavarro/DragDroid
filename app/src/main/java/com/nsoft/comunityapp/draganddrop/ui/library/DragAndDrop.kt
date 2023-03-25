@@ -97,10 +97,8 @@ fun <T> DropItem(
 
     ) {
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) {
-            Log.i("Drop:"," isCurrentDropTarget && !dragInfo.isDragging - true")
             dragInfo.dataToDrop as T?
         } else {
-            Log.i("Drop:"," isCurrentDropTarget && !dragInfo.isDragging - false")
             null
         }
         content(isCurrentDropTarget, data, rowToIndex, columnToIndex)
@@ -136,13 +134,15 @@ fun DraggableScreen(
                             alpha = if (targetSize == IntSize.Zero) {
                                 0f
                             } else .9f
-                            translationX = offset.x.minus(targetSize.width / 2)
-                            translationY = offset.y.minus(targetSize.height / 2)
+                            translationX = offset.x.minus(targetSize.width / 3)
+                            translationY = offset.y.minus(targetSize.height / 3)
 
 
                         }
                         .onGloballyPositioned {
+                            Log.i("OTARGET SIZE Before: ", targetSize.width.toString() + " - " + targetSize.height.toString())
                             targetSize = it.size
+                            Log.i("OTARGET SIZE After: ", targetSize.width.toString() + " - " + targetSize.height.toString())
                         }
                 ){
                     state.draggableComposable?.invoke()
