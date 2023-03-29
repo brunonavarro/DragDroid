@@ -13,8 +13,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -67,13 +69,21 @@ fun DragDropScreen(
                 Log.e("COLUMN: ", "columnToIndex $columnPosition")
                 Log.e("COLUMN: ", "rowToIndex $rowPosition")
                 Log.e("COLUMN: ", "------------------------------------------------------------")
-                if (personItem != null) {
-                    LaunchedEffect(key1 = personItem) {
-                        mainViewModel.addPersons(personItem, rowPosition, columnPosition)
-                    }
-                }
 
                 if (isInBound) {
+                    if (personItem != null) {
+                        //personItem.id = rowPosition.to.toString()
+                        personItem.columnPosition.to = columnPosition
+                        LaunchedEffect(key1 = personItem) {
+                            mainViewModel.addPersons(
+                                personItem,
+                                rowPosition,
+                                columnPosition,
+                                index = personItem.id.toInt()
+                            )
+                        }
+                    }
+
                     ColumnCard(
                         context = context,
                         mainViewModel = mainViewModel,
@@ -123,53 +133,62 @@ fun ColumnCard(
     taskItems: List<PersonUIItem>,
     mainViewModel: MainViewModel
 ) {
-    LazyColumn(
-        modifier = modifier
-    ) {
-        item {
-            // Encabezado de estado
-            Text(
-                text = idColumn.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
-        Log.i("TASK LIST", "list $taskItems")
-        items(taskItems) { task ->
-            // Elemento de tarjeta de tarea
-            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            Log.i("TASK", "task $task")
-            Log.i("TASK", "idColumn $idColumn")
-            DragTarget(
-                rowIndex = task.rowPosition.from ?: 0,
-                columnIndex = task.columnPosition.from ?: idColumn,
-                dataToDrop = task,
-                vibrator = vibrator,
-                mainViewModel = mainViewModel
-            ) {
-                Card(
-                    backgroundColor = task.backgroundColor,
-                    modifier = Modifier
-                        .width(Dp(screenWidth / 2f))
-                        .height(Dp(screenHeight / 5f))
-                        .padding(8.dp)
-                        .shadow(elevation.dp, RoundedCornerShape(15.dp))
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(
-                            text = task.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        Text(
-                            text = task.column.name,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.End)
-                        )
+
+    Column {
+
+        // Encabezado de estado
+        Text(
+            text = idColumn.name,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Divider()
+
+        LazyColumn(
+            modifier = modifier
+        ) {
+            Log.i("TASK LIST", "list $taskItems")
+            taskItems.forEachIndexed { index, personUIItem ->
+                item {
+                    // Elemento de tarjeta de tarea
+                    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    personUIItem.id = index.toString()
+                    personUIItem.columnPosition.from = idColumn
+                    Log.i("TASK", "task $personUIItem")
+                    Log.i("TASK", "idColumn $idColumn")
+                    DragTarget(
+                        rowIndex = personUIItem.rowPosition.from ?: 0,
+                        columnIndex = personUIItem.columnPosition.from as COLUMN,
+                        dataToDrop = personUIItem,
+                        vibrator = vibrator,
+                        mainViewModel = mainViewModel
+                    ) {
+                        Card(
+                            backgroundColor = personUIItem.backgroundColor,
+                            modifier = Modifier
+                                .width(Dp(screenWidth / 2f))
+                                .height(Dp(screenHeight / 5f))
+                                .padding(8.dp)
+                                .shadow(elevation.dp, RoundedCornerShape(15.dp))
+                        ) {
+                            Column(Modifier.padding(16.dp)) {
+                                Text(
+                                    text = personUIItem.name,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                Text(
+                                    text = personUIItem.column.name,
+                                    color = Color.White,
+                                    modifier = Modifier.align(Alignment.End)
+                                )
+                            }
+                        }
                     }
                 }
             }

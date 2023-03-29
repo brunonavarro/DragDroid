@@ -1,7 +1,10 @@
 package com.nsoft.comunityapp.draganddrop.ui
 
 import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
@@ -65,16 +68,22 @@ class MainViewModel: ViewModel() {
         draggedTask.value = null
 
         Log.i("MainVM END MOVE TO: ", "row $rowPosition - column $columnPosition")
+        Log.i("MainVM END MOVE TO: ", "---------------------------------------------------")
     }
 
-    fun addPersons(item: PersonUIItem, rowPosition: RowPosition, columnPosition: ColumnPosition) {
+    fun addPersons(
+        item: PersonUIItem,
+        rowPosition: RowPosition,
+        columnPosition: ColumnPosition,
+        index: Int
+    ) {
         columnPosition.to as COLUMN
         columnPosition.from as COLUMN
 
         if (item.canAdd() && columnPosition.canAdd()) {
-            taskItems.remove(item)
-
-            item.column = columnPosition.to
+            Log.e("ADD $columnPosition VM", "before taskItems ${taskItems.toList().toString()}")
+            taskItems.removeAt(index)
+            item.column = columnPosition.to as COLUMN
             item.columnPosition = columnPosition
             item.rowPosition = rowPosition
             item.backgroundColor = when (columnPosition.to) {
@@ -93,14 +102,26 @@ class MainViewModel: ViewModel() {
             }
 
             Log.e(
-                "ADD",
+                "ADD ${columnPosition.to} VM",
+                "---------------------------------------------------------"
+            )
+            Log.e(
+                "ADD ${columnPosition.to} VM",
                 "item ${item.id} - ${item.column} - ${item.isDraggable} - ${item.rowPosition} - ${item.columnPosition}"
             )
-            Log.e("ADD", "row $rowPosition")
-            Log.e("ADD", "column $columnPosition")
-            Log.e("ADD", "---------------------------------------------------------")
+            Log.e("ADD ${columnPosition.to} VM", "row $rowPosition")
+            Log.e("ADD ${columnPosition.to} VM", "column $columnPosition")
+            Log.e(
+                "ADD ${columnPosition.to} VM",
+                "---------------------------------------------------------"
+            )
 
-            taskItems.add(item)
+            taskItems.add(index, item)
+            Log.e("ADD $columnPosition VM", "after taskItems ${taskItems.toList().toString()}")
+            Log.e(
+                "ADD $columnPosition VM",
+                "after taskItems -----------------------------------------------------"
+            )
         }
     }
 

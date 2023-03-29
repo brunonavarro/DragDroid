@@ -6,7 +6,9 @@ import android.os.Vibrator
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,7 +19,6 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 
 internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
@@ -70,8 +71,8 @@ fun <T> DragTarget(
                         currentState.dataToDrop = dataToDrop
                         currentState.isDragging = true
                         currentState.dragPosition = currentPosition + it
-                        currentState.columnFromIndex = currentState.columnToIndex ?: columnIndex
-                        currentState.rowFromIndex = currentState.rowToIndex ?: rowIndex
+                        currentState.columnFromIndex = currentState.columnFromIndex ?: columnIndex
+                        currentState.rowFromIndex = currentState.rowFromIndex ?: rowIndex
                         currentState.draggableComposable = content
                         Log.e("DRAG: ", "START currentState $currentState")
 
@@ -92,8 +93,8 @@ fun <T> DragTarget(
                     },
                     onDragEnd = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnFromIndex = currentState.columnToIndex ?: columnIndex
-                        currentState.rowFromIndex = currentState.rowToIndex ?: rowIndex
+                        currentState.columnFromIndex = currentState.columnFromIndex ?: columnIndex
+                        currentState.rowFromIndex = currentState.rowFromIndex ?: rowIndex
                         currentState.isDragging = false
                         Log.e("DRAG: ", "END currentState $currentState")
 
@@ -109,8 +110,8 @@ fun <T> DragTarget(
                     },
                     onDragCancel = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnFromIndex = currentState.columnToIndex ?: columnIndex
-                        currentState.rowFromIndex = currentState.rowToIndex ?: rowIndex
+                        currentState.columnFromIndex = currentState.columnFromIndex ?: columnIndex
+                        currentState.rowFromIndex = currentState.rowFromIndex ?: rowIndex
                         currentState.isDragging = false
                         Log.e("DRAG: ", "CANCEL currentState $currentState")
 
@@ -152,7 +153,10 @@ fun <T> DropItem(
         modifier = modifier
             .onGloballyPositioned {
                 it.boundsInWindow().let { rect ->
-
+                    Log.e(
+                        "ADD $columnIndex",
+                        "drop boundsInWindow -----------------------------------------------------"
+                    )
                     Log.e("ADD $columnIndex: ", "rect $rect")
 
                     Log.e("ADD $columnIndex: ", "dragPosition $dragPosition")
@@ -167,34 +171,45 @@ fun <T> DropItem(
                         "ADD $columnIndex: ",
                         "onGloballyPositioned boundsInWindow $isCurrentDropTarget"
                     )
+                    Log.e(
+                        "ADD $columnIndex",
+                        "drop boundsInWindow -----------------------------------------------------"
+                    )
                 }
             },
 
     ) {
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) {
-            dragInfo.rowToIndex = rowIndex
-            dragInfo.columnToIndex = columnIndex
             dragInfo.dataToDrop as T?
         } else {
             null
         }
+
+        dragInfo.rowToIndex = rowIndex
+        dragInfo.columnToIndex = columnIndex
+
+        Log.e(
+            "ADD $columnIndex",
+            "drop event -----------------------------------------------------"
+        )
 
         Log.e("DROP $columnIndex: ", "dragInfo $dragInfo")
         Log.e("DROP $columnIndex: ", "data $data")
         Log.e("DROP $columnIndex: ", "isCurrentDropTarget $isCurrentDropTarget")
         Log.e("DROP $columnIndex: ", "index to $rowIndex - column to $columnIndex")
         val rowPosition = RowPosition(dragInfo.rowFromIndex, dragInfo.rowToIndex ?: rowIndex)
-        val columnPosition = ColumnPosition(dragInfo.columnFromIndex, dragInfo.columnToIndex)
+        val columnPosition =
+            ColumnPosition(dragInfo.columnFromIndex, dragInfo.columnToIndex ?: columnIndex)
 
-        Log.e(
-            "ADD $columnIndex",
-            "drop event -----------------------------------------------------"
-        )
+
         Log.e("ADD $columnIndex", "drop event data $data")
         Log.e("ADD $columnIndex", "drop event rowPosition $rowPosition - $rowIndex")
         Log.e("ADD $columnIndex", "drop event columnPosition $columnPosition - $columnIndex")
         Log.e("ADD $columnIndex", "drop event isCurrentDropTarget $isCurrentDropTarget")
-
+        Log.e(
+            "ADD $columnIndex",
+            "drop event -----------------------------------------------------"
+        )
         content(
             isCurrentDropTarget && columnIndex != columnPosition.from,
             data, rowPosition, columnPosition
@@ -260,8 +275,8 @@ internal class DragTargetInfo {
 }
 
 data class ColumnPosition(
-    val from: Any? = null,
-    val to: Any? = null
+    var from: Any? = null,
+    var to: Any? = null
 ) {
     fun canAdd() = from != to
 }
@@ -277,5 +292,5 @@ open class ItemPosition(
     var rowPosition: RowPosition,
     var columnPosition: ColumnPosition
 ) {
-    fun canAdd() = columnPosition.canAdd()
+    fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }
