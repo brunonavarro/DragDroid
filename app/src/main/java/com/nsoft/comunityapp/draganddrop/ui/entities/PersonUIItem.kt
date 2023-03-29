@@ -1,14 +1,24 @@
 package com.nsoft.comunityapp.draganddrop.ui.entities
 
 import androidx.compose.ui.graphics.Color
+import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.ItemPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+
 
 data class PersonUIItem(
-    val name: String,
-    val id: String,
-    val backgroundColor: Color,
+    var name: String,
+    var id: String,
+    var backgroundColor: Color,
     var isDraggable: Boolean = false,
     var column: COLUMN = COLUMN.TO_DO
-)
+) : ItemPosition(
+    rowPosition = RowPosition(from = id.toInt()),
+    columnPosition = ColumnPosition(from = column)
+) {
+
+
+}
 
 enum class COLUMN{
     TO_DO,
