@@ -71,14 +71,41 @@ fun <T> DragTarget(
                         currentState.dataToDrop = dataToDrop
                         currentState.isDragging = true
                         currentState.dragPosition = currentPosition + it
-                        currentState.columnFromIndex = currentState.columnFromIndex ?: columnIndex
-                        currentState.rowFromIndex = currentState.rowFromIndex ?: rowIndex
+                        currentState.columnFromIndex = columnIndex
+                        currentState.rowFromIndex = rowIndex
                         currentState.draggableComposable = content
-                        Log.e("DRAG: ", "START currentState $currentState")
 
-                        val rowPosition = RowPosition(from = currentState.rowFromIndex ?: rowIndex)
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "START -------------------------------------------"
+                        )
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "START currentState row from ${currentState.rowFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "START currentState row to ${currentState.rowToIndex}"
+                        )
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "START currentState column from ${currentState.columnFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "START currentState column to ${currentState.columnToIndex}"
+                        )
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "START -------------------------------------------"
+                        )
+
+                        val rowPosition = RowPosition(from = rowIndex)
                         val columnPosition =
-                            ColumnPosition(from = currentState.columnFromIndex ?: columnIndex)
+                            ColumnPosition(from = columnIndex)
 
                         mainViewModel.startDragging(
                             dataToDrop as PersonUIItem,
@@ -89,18 +116,65 @@ fun <T> DragTarget(
                     onDrag = { change, dragAmount ->
                         change.consumeAllChanges()
                         currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
-                        Log.e("DRAG: ", "CURRENT currentState $currentState")
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CURRENT -------------------------------------------"
+                        )
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CURRENT currentState row from ${currentState.rowFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CURRENT currentState row to ${currentState.rowToIndex}"
+                        )
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CURRENT currentState column from ${currentState.columnFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CURRENT currentState column to ${currentState.columnToIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CURRENT -------------------------------------------"
+                        )
+
                     },
                     onDragEnd = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnFromIndex = currentState.columnFromIndex ?: columnIndex
-                        currentState.rowFromIndex = currentState.rowFromIndex ?: rowIndex
+                        currentState.columnFromIndex = columnIndex
+                        currentState.rowFromIndex = rowIndex
                         currentState.isDragging = false
-                        Log.e("DRAG: ", "END currentState $currentState")
 
-                        val rowPosition = RowPosition(from = currentState.rowFromIndex ?: rowIndex)
+                        Log.e("DRAG taskItems: ", "END -------------------------------------------")
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "END currentState row from ${currentState.rowFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "END currentState row to ${currentState.rowToIndex}"
+                        )
+
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "END currentState column from ${currentState.columnFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "END currentState column to ${currentState.columnToIndex}"
+                        )
+
+                        Log.e("DRAG taskItems: ", "END -------------------------------------------")
+
+                        val rowPosition = RowPosition(from = rowIndex)
                         val columnPosition =
-                            ColumnPosition(from = currentState.columnFromIndex ?: columnIndex)
+                            ColumnPosition(from = columnIndex)
 
                         mainViewModel.endDragging(
                             dataToDrop as PersonUIItem,
@@ -110,14 +184,30 @@ fun <T> DragTarget(
                     },
                     onDragCancel = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnFromIndex = currentState.columnFromIndex ?: columnIndex
-                        currentState.rowFromIndex = currentState.rowFromIndex ?: rowIndex
+                        currentState.columnFromIndex = columnIndex
+                        currentState.rowFromIndex = rowIndex
                         currentState.isDragging = false
-                        Log.e("DRAG: ", "CANCEL currentState $currentState")
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CANCEL currentState row from ${currentState.rowFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CANCEL currentState row to ${currentState.rowToIndex}"
+                        )
 
-                        val rowPosition = RowPosition(from = currentState.rowFromIndex ?: rowIndex)
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CANCEL currentState column from ${currentState.columnFromIndex}"
+                        )
+                        Log.e(
+                            "DRAG taskItems: ",
+                            "CANCEL currentState column to ${currentState.columnToIndex}"
+                        )
+
+                        val rowPosition = RowPosition(from = rowIndex)
                         val columnPosition =
-                            ColumnPosition(from = currentState.columnFromIndex ?: columnIndex)
+                            ColumnPosition(from = columnIndex)
 
                         mainViewModel.endDragging(
                             dataToDrop as PersonUIItem,
@@ -139,6 +229,7 @@ fun <T> DropItem(
     modifier: Modifier,
     rowIndex: Int,
     columnIndex: Any,
+    canBound: Boolean = true,
     content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition) -> Unit)
 ){
     val dragInfo = LocalDragTargetInfo.current
@@ -153,31 +244,11 @@ fun <T> DropItem(
         modifier = modifier
             .onGloballyPositioned {
                 it.boundsInWindow().let { rect ->
-                    Log.e(
-                        "ADD $columnIndex",
-                        "drop boundsInWindow -----------------------------------------------------"
-                    )
-                    Log.e("ADD $columnIndex: ", "rect $rect")
-
-                    Log.e("ADD $columnIndex: ", "dragPosition $dragPosition")
-                    Log.e("ADD $columnIndex: ", "dragOffset $dragOffset")
-
-
                     isCurrentDropTarget = if (dragInfo.isDragging) {
                         rect.contains(dragPosition + dragOffset)
                     } else false
-
-                    Log.e(
-                        "ADD $columnIndex: ",
-                        "onGloballyPositioned boundsInWindow $isCurrentDropTarget"
-                    )
-                    Log.e(
-                        "ADD $columnIndex",
-                        "drop boundsInWindow -----------------------------------------------------"
-                    )
                 }
-            },
-
+            }
     ) {
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) {
             dragInfo.dataToDrop as T?
@@ -197,7 +268,7 @@ fun <T> DropItem(
         Log.e("DROP $columnIndex: ", "data $data")
         Log.e("DROP $columnIndex: ", "isCurrentDropTarget $isCurrentDropTarget")
         Log.e("DROP $columnIndex: ", "index to $rowIndex - column to $columnIndex")
-        val rowPosition = RowPosition(dragInfo.rowFromIndex, dragInfo.rowToIndex ?: rowIndex)
+        val rowPosition = RowPosition(dragInfo.rowFromIndex, dragInfo.rowToIndex ?: (rowIndex))
         val columnPosition =
             ColumnPosition(dragInfo.columnFromIndex, dragInfo.columnToIndex ?: columnIndex)
 
@@ -205,13 +276,13 @@ fun <T> DropItem(
         Log.e("ADD $columnIndex", "drop event data $data")
         Log.e("ADD $columnIndex", "drop event rowPosition $rowPosition - $rowIndex")
         Log.e("ADD $columnIndex", "drop event columnPosition $columnPosition - $columnIndex")
-        Log.e("ADD $columnIndex", "drop event isCurrentDropTarget $isCurrentDropTarget")
         Log.e(
             "ADD $columnIndex",
             "drop event -----------------------------------------------------"
         )
         content(
-            isCurrentDropTarget && columnIndex != columnPosition.from,
+            isCurrentDropTarget &&
+                    columnPosition.from != columnPosition.to,
             data, rowPosition, columnPosition
         )
     }
@@ -282,8 +353,8 @@ data class ColumnPosition(
 }
 
 data class RowPosition(
-    val from: Int? = 0,
-    val to: Int? = 0
+    var from: Int? = 0,
+    var to: Int? = 0
 ) {
     fun canAdd() = from != to
 }

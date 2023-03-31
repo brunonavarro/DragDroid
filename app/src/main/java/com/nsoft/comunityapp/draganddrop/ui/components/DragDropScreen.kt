@@ -72,14 +72,11 @@ fun DragDropScreen(
 
                 if (isInBound) {
                     if (personItem != null) {
-                        //personItem.id = rowPosition.to.toString()
-                        personItem.columnPosition.to = columnPosition
                         LaunchedEffect(key1 = personItem) {
                             mainViewModel.addPersons(
                                 personItem,
                                 rowPosition,
-                                columnPosition,
-                                index = personItem.id.toInt()
+                                columnPosition
                             )
                         }
                     }
@@ -93,7 +90,7 @@ fun DragDropScreen(
                         elevation = 6,
                         taskItems = tasksInStatus,
                         modifier = Modifier
-                            .width(180.dp)
+                            .width(120.dp)
                             .padding(8.dp)
                             .border(
                                 1.dp,
@@ -111,7 +108,7 @@ fun DragDropScreen(
                         idColumn = column,
                         taskItems = tasksInStatus,
                         modifier = Modifier
-                            .width(180.dp)
+                            .width(120.dp)
                             .padding(8.dp)
                             .background(Color.LightGray.copy(alpha = 0.2f))
                     )
@@ -155,8 +152,9 @@ fun ColumnCard(
                 item {
                     // Elemento de tarjeta de tarea
                     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                    personUIItem.id = index.toString()
+                    personUIItem.id = index
                     personUIItem.columnPosition.from = idColumn
+                    personUIItem.rowPosition.from = index
                     Log.i("TASK", "task $personUIItem")
                     Log.i("TASK", "idColumn $idColumn")
                     DragTarget(
@@ -169,7 +167,7 @@ fun ColumnCard(
                         Card(
                             backgroundColor = personUIItem.backgroundColor,
                             modifier = Modifier
-                                .width(Dp(screenWidth / 2f))
+                                .width(Dp(screenWidth / 2.8f))
                                 .height(Dp(screenHeight / 5f))
                                 .padding(8.dp)
                                 .shadow(elevation.dp, RoundedCornerShape(15.dp))

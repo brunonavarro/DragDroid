@@ -8,7 +8,7 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 
 data class PersonUIItem(
     var name: String,
-    var id: String,
+    var id: Int = 0,
     var backgroundColor: Color,
     var isDraggable: Boolean = false,
     var column: COLUMN = COLUMN.TO_DO
