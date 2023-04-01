@@ -70,17 +70,17 @@ fun DragDropScreen(
                 Log.e("COLUMN: ", "rowToIndex $rowPosition")
                 Log.e("COLUMN: ", "------------------------------------------------------------")
 
-                if (isInBound) {
-                    if (personItem != null) {
-                        LaunchedEffect(key1 = personItem) {
-                            mainViewModel.addPersons(
-                                personItem,
-                                rowPosition,
-                                columnPosition
-                            )
-                        }
+                LaunchedEffect(key1 = personItem, key2 = isInBound) {
+                    if (isInBound && personItem != null) {
+                        mainViewModel.addPersons(
+                            personItem,
+                            rowPosition,
+                            columnPosition
+                        )
                     }
+                }
 
+                if (isInBound) {
                     ColumnCard(
                         context = context,
                         mainViewModel = mainViewModel,

@@ -242,13 +242,13 @@ fun <T> DropItem(
 
     Box(
         modifier = modifier
-            .onGloballyPositioned {
+            .then(Modifier.onGloballyPositioned {
                 it.boundsInWindow().let { rect ->
                     isCurrentDropTarget = if (dragInfo.isDragging) {
                         rect.contains(dragPosition + dragOffset)
                     } else false
                 }
-            }
+            })
     ) {
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) {
             dragInfo.dataToDrop as T?

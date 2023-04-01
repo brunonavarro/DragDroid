@@ -94,42 +94,46 @@ class MainViewModel: ViewModel() {
         columnPosition.to as COLUMN
         columnPosition.from as COLUMN
 
-        if (item.canAdd() && columnPosition.canAdd()) {
-            Log.e("ADD $columnPosition VM", "before taskItems ${taskItems.toList()}")
+        //if (item.canAdd() && columnPosition.canAdd()) {
+        Log.e("ADD $columnPosition VM", "before taskItems ${taskItems.toList()}")
 
-            val index = taskItems.indexOfFirst { it == item }
-            val newId = taskItems.filter { it.column == columnPosition.to }.size
+        val index = taskItems.indexOfFirst { it == item }
+        val newId = taskItems.filter { it.column == columnPosition.to }.size
 
-            val newItems = mutableListOf<PersonUIItem>()
+        val newItems = mutableListOf<PersonUIItem>()
 
-            taskItems.filter {
-                it.columnPosition.from == columnPosition.from
-            }.forEachIndexed { index, personUIItem ->
-                if (personUIItem == item) {
-                    personUIItem.id = index
-                    personUIItem.rowPosition.from = index
-                    personUIItem.rowPosition.to = rowPosition.to
-                    personUIItem.column = columnPosition.to as COLUMN
-                    personUIItem.columnPosition = columnPosition
+        taskItems.forEachIndexed { index, personUIItem ->
+            if (
+                personUIItem.columnPosition.from == columnPosition.from &&
+                personUIItem == item
+            ) {
+                personUIItem.id = index
+                personUIItem.rowPosition.from = index
+                personUIItem.rowPosition.to = rowPosition.to
+                personUIItem.column = columnPosition.to as COLUMN
+                personUIItem.columnPosition.from = columnPosition.from
+                personUIItem.columnPosition.to = columnPosition.to
 
-                    personUIItem.backgroundColor = when (columnPosition.to) {
-                        COLUMN.TO_DO -> {
-                            Color.DarkGray
-                        }
-                        COLUMN.IN_PROGRESS -> {
-                            Color.Blue
-                        }
-                        COLUMN.DEV_DONE -> {
-                            Color.Green
+                personUIItem.backgroundColor = when (columnPosition.to) {
+                    COLUMN.TO_DO -> {
+                        Color.DarkGray
+                    }
+                    COLUMN.IN_PROGRESS -> {
+                        Color.Blue
+                    }
+                    COLUMN.DEV_DONE -> {
+                        Color.Green
                         }
                         else -> {
                             item.backgroundColor
                         }
                     }
                 }
+            newItems.add(index, personUIItem)
             }
 
-            taskItems.addAll(newItems)
+        taskItems.clear()
+        taskItems.addAll(newItems)
 
             //taskItems.removeAt(index)
             /*rowPosition.to?.let {
@@ -179,7 +183,7 @@ class MainViewModel: ViewModel() {
                 "ADD $columnPosition VM",
                 "after taskItems -----------------------------------------------------"
             )
-        }
+        //}
     }
 
 }
