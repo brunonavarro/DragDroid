@@ -104,7 +104,7 @@ class MainViewModel: ViewModel() {
 
         taskItems.forEachIndexed { index, personUIItem ->
             if (
-                personUIItem.columnPosition.from == columnPosition.from &&
+                personUIItem.column != columnPosition.to &&
                 personUIItem == item
             ) {
                 personUIItem.id = index
