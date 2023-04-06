@@ -48,30 +48,27 @@ fun DragDropScreen(
     val columnByStatus = mainViewModel.columnsItems.groupBy { it }
     val tasksByStatus = mainViewModel.taskItems.groupBy { it.column }
 
-    Log.e("COLUMN LIST: ", "map list $columnByStatus")
-    Log.e("TASK LIST: ", "map list $tasksByStatus")
     // Crear un LazyColumn para representar las columnas de estado
     LazyRow(Modifier.fillMaxWidth()) {
         items(columnByStatus.keys.toList(), key = { it }) { column ->
             val tasksInStatus = tasksByStatus[column] ?: emptyList()
-            Log.e("TASK LIST: ", "list $tasksInStatus")
             // Crear un LazyColumn para representar las filas de tarjetas de tarea
             DropItem<PersonUIItem>(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                rowIndex = 0,
+                rowIndex = tasksByStatus.size,
                 columnIndex = column
             ) { isInBound, personItem, rowPosition, columnPosition ->
 
-                Log.e("COLUMN: ", "personItem $personItem")
-                Log.e("COLUMN: ", "isInBound $isInBound")
-                Log.e("COLUMN: ", "columnToIndex $columnPosition")
-                Log.e("COLUMN: ", "rowToIndex $rowPosition")
-                Log.e("COLUMN: ", "------------------------------------------------------------")
-
-                LaunchedEffect(key1 = personItem, key2 = isInBound) {
+                LaunchedEffect(key1 = personItem != null, key2 = isInBound) {
                     if (isInBound && personItem != null) {
+                        Log.e("LAUNCHED EFFECT: ", "personItem $personItem")
+                        Log.e("LAUNCHED EFFECT: ", "isInBound $isInBound")
+                        Log.e(
+                            "LAUNCHED EFFECT: ",
+                            "------------------------------------------------------------"
+                        )
                         mainViewModel.addPersons(
                             personItem,
                             rowPosition,
@@ -147,23 +144,26 @@ fun ColumnCard(
         LazyColumn(
             modifier = modifier
         ) {
-            Log.i("TASK LIST", "list $taskItems")
-            taskItems.forEachIndexed { index, personUIItem ->
-                item {
-                    // Elemento de tarjeta de tarea
-                    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                    personUIItem.id = index
-                    personUIItem.columnPosition.from = idColumn
-                    personUIItem.rowPosition.from = index
-                    Log.i("TASK", "task $personUIItem")
-                    Log.i("TASK", "idColumn $idColumn")
-                    DragTarget(
-                        rowIndex = personUIItem.rowPosition.from ?: 0,
-                        columnIndex = personUIItem.columnPosition.from as COLUMN,
-                        dataToDrop = personUIItem,
-                        vibrator = vibrator,
-                        mainViewModel = mainViewModel
-                    ) {
+
+            items(taskItems, key = {
+                it.id
+            }) { personUIItem ->
+                // Elemento de tarjeta de tarea
+                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                /**validar si es de utilidad**/
+                personUIItem.columnPosition.from = idColumn
+                DragTarget(
+                    rowIndex = personUIItem.rowPosition.from ?: 0,
+                    columnIndex = personUIItem.columnPosition.from as COLUMN,
+                    dataToDrop = personUIItem,
+                    vibrator = vibrator,
+                    onStart = { dragItem, rowPosition, columnPosition ->
+                        mainViewModel.startDragging(dragItem, rowPosition, columnPosition)
+                    },
+                    onEnd = { dragItem, rowPosition, columnPosition ->
+                        mainViewModel.endDragging(dragItem, rowPosition, columnPosition)
+                    }
+                ) {
                         Card(
                             backgroundColor = personUIItem.backgroundColor,
                             modifier = Modifier
@@ -189,7 +189,7 @@ fun ColumnCard(
                         }
                     }
                 }
-            }
+
         }
     }
 }

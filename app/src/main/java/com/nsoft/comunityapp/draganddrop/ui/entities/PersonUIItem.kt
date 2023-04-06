@@ -13,10 +13,23 @@ data class PersonUIItem(
     var isDraggable: Boolean = false,
     var column: COLUMN = COLUMN.TO_DO
 ) : ItemPosition(
-    rowPosition = RowPosition(from = id.toInt()),
+    rowPosition = RowPosition(),
     columnPosition = ColumnPosition(from = column)
 ) {
 
+    fun updateItem(
+        personUIItem: PersonUIItem,
+        index: Int,
+        columnPosition: ColumnPosition,
+        rowPosition: RowPosition
+    ) {
+        personUIItem.id = index
+        personUIItem.rowPosition.from = index
+        personUIItem.rowPosition.to = rowPosition.to
+        personUIItem.column = columnPosition.to as COLUMN
+        personUIItem.columnPosition.from = columnPosition.from
+        personUIItem.columnPosition.to = columnPosition.to
+    }
 
 }
 

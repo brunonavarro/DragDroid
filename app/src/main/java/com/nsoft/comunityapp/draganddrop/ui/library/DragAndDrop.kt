@@ -18,7 +18,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 
 internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
@@ -32,7 +31,16 @@ fun <T> DragTarget(
     columnIndex: Any,
     dataToDrop: T,
     vibrator: Vibrator?,
-    mainViewModel: MainViewModel,
+    onStart: (
+        item: PersonUIItem,
+        rowPosition: RowPosition,
+        columnPosition: ColumnPosition
+    ) -> Unit,
+    onEnd: (
+        item: PersonUIItem,
+        rowPosition: RowPosition,
+        columnPosition: ColumnPosition
+    ) -> Unit,
     content: @Composable (() -> Unit)
 ) {
     var currentPosition by remember {
@@ -45,7 +53,6 @@ fun <T> DragTarget(
         modifier = modifier
             .onGloballyPositioned {
                 currentPosition = it.localToWindow(Offset.Zero)
-                Log.e("DRAG: ", " onGloballyPositioned currentPosition $currentPosition")
             }
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
@@ -71,148 +78,47 @@ fun <T> DragTarget(
                         currentState.dataToDrop = dataToDrop
                         currentState.isDragging = true
                         currentState.dragPosition = currentPosition + it
-                        currentState.columnFromIndex = columnIndex
-                        currentState.rowFromIndex = rowIndex
+
+                        currentState.columnPosition.from = columnIndex
+                        currentState.rowPosition.from = rowIndex
+
                         currentState.draggableComposable = content
 
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "START -------------------------------------------"
-                        )
-
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "START currentState row from ${currentState.rowFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "START currentState row to ${currentState.rowToIndex}"
-                        )
-
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "START currentState column from ${currentState.columnFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "START currentState column to ${currentState.columnToIndex}"
-                        )
-
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "START -------------------------------------------"
-                        )
-
-                        val rowPosition = RowPosition(from = rowIndex)
-                        val columnPosition =
-                            ColumnPosition(from = columnIndex)
-
-                        mainViewModel.startDragging(
+                        onStart(
                             dataToDrop as PersonUIItem,
-                            rowPosition,
-                            columnPosition
+                            currentState.rowPosition,
+                            currentState.columnPosition
                         )
                     },
                     onDrag = { change, dragAmount ->
                         change.consumeAllChanges()
                         currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CURRENT -------------------------------------------"
-                        )
 
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CURRENT currentState row from ${currentState.rowFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CURRENT currentState row to ${currentState.rowToIndex}"
-                        )
-
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CURRENT currentState column from ${currentState.columnFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CURRENT currentState column to ${currentState.columnToIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CURRENT -------------------------------------------"
-                        )
-
+                        currentState.columnPosition.from = columnIndex
+                        currentState.rowPosition.from = rowIndex
                     },
                     onDragEnd = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnFromIndex = columnIndex
-                        currentState.rowFromIndex = rowIndex
+                        currentState.columnPosition.from = columnIndex
+                        currentState.rowPosition.from = rowIndex
                         currentState.isDragging = false
 
-                        Log.e("DRAG taskItems: ", "END -------------------------------------------")
-
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "END currentState row from ${currentState.rowFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "END currentState row to ${currentState.rowToIndex}"
-                        )
-
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "END currentState column from ${currentState.columnFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "END currentState column to ${currentState.columnToIndex}"
-                        )
-
-                        Log.e("DRAG taskItems: ", "END -------------------------------------------")
-
-                        val rowPosition = RowPosition(from = rowIndex)
-                        val columnPosition =
-                            ColumnPosition(from = columnIndex)
-
-                        mainViewModel.endDragging(
+                        onEnd(
                             dataToDrop as PersonUIItem,
-                            rowPosition,
-                            columnPosition
+                            currentState.rowPosition,
+                            currentState.columnPosition
                         )
                     },
                     onDragCancel = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnFromIndex = columnIndex
-                        currentState.rowFromIndex = rowIndex
+                        currentState.columnPosition.from = columnIndex
+                        currentState.rowPosition.from = rowIndex
                         currentState.isDragging = false
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CANCEL currentState row from ${currentState.rowFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CANCEL currentState row to ${currentState.rowToIndex}"
-                        )
 
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CANCEL currentState column from ${currentState.columnFromIndex}"
-                        )
-                        Log.e(
-                            "DRAG taskItems: ",
-                            "CANCEL currentState column to ${currentState.columnToIndex}"
-                        )
-
-                        val rowPosition = RowPosition(from = rowIndex)
-                        val columnPosition =
-                            ColumnPosition(from = columnIndex)
-
-                        mainViewModel.endDragging(
+                        onEnd(
                             dataToDrop as PersonUIItem,
-                            rowPosition,
-                            columnPosition
+                            currentState.rowPosition,
+                            currentState.columnPosition
                         )
                     }
                 )
@@ -229,7 +135,6 @@ fun <T> DropItem(
     modifier: Modifier,
     rowIndex: Int,
     columnIndex: Any,
-    canBound: Boolean = true,
     content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition) -> Unit)
 ){
     val dragInfo = LocalDragTargetInfo.current
@@ -251,39 +156,16 @@ fun <T> DropItem(
             })
     ) {
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) {
+            dragInfo.rowPosition.to = rowIndex
+            dragInfo.columnPosition.to = columnIndex
             dragInfo.dataToDrop as T?
         } else {
             null
         }
 
-        dragInfo.rowToIndex = rowIndex
-        dragInfo.columnToIndex = columnIndex
-
-        Log.e(
-            "ADD $columnIndex",
-            "drop event -----------------------------------------------------"
-        )
-
-        Log.e("DROP $columnIndex: ", "dragInfo $dragInfo")
-        Log.e("DROP $columnIndex: ", "data $data")
-        Log.e("DROP $columnIndex: ", "isCurrentDropTarget $isCurrentDropTarget")
-        Log.e("DROP $columnIndex: ", "index to $rowIndex - column to $columnIndex")
-        val rowPosition = RowPosition(dragInfo.rowFromIndex, dragInfo.rowToIndex ?: (rowIndex))
-        val columnPosition =
-            ColumnPosition(dragInfo.columnFromIndex, dragInfo.columnToIndex ?: columnIndex)
-
-
-        Log.e("ADD $columnIndex", "drop event data $data")
-        Log.e("ADD $columnIndex", "drop event rowPosition $rowPosition - $rowIndex")
-        Log.e("ADD $columnIndex", "drop event columnPosition $columnPosition - $columnIndex")
-        Log.e(
-            "ADD $columnIndex",
-            "drop event -----------------------------------------------------"
-        )
         content(
-            isCurrentDropTarget &&
-                    columnPosition.from != columnPosition.to,
-            data, rowPosition, columnPosition
+            isCurrentDropTarget && dragInfo.columnPosition.canAdd() && data != null,
+            data, dragInfo.rowPosition, dragInfo.columnPosition
         )
     }
 }
@@ -319,11 +201,9 @@ fun DraggableScreen(
                             } else .9f
                             translationX = offset.x.minus(targetSize.width / 3)
                             translationY = offset.y.minus(targetSize.height / 3)
-                            Log.i("SCREEN DRAG: ", "graphicsLayer offset $offset")
                         }
                         .onGloballyPositioned {
                             targetSize = it.size
-                            Log.i("SCREEN DRAG: ", "onGloballyPositioned targetSize $targetSize")
                         }
                 ){
                     state.draggableComposable?.invoke()
@@ -339,10 +219,10 @@ internal class DragTargetInfo {
     var dragOffset by mutableStateOf(Offset.Zero)
     var draggableComposable by mutableStateOf<((@Composable () -> Unit)?)>(null)
     var dataToDrop by mutableStateOf<Any?>(null)
-    var rowFromIndex by mutableStateOf<Int?>(null)
-    var rowToIndex by mutableStateOf<Int?>(null)
-    var columnFromIndex by mutableStateOf<Any?>(null)
-    var columnToIndex by mutableStateOf<Any?>(null)
+
+    var columnPosition by mutableStateOf(ColumnPosition())
+    var rowPosition by mutableStateOf(RowPosition())
+
 }
 
 data class ColumnPosition(
