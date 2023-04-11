@@ -11,8 +11,20 @@ import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+import kotlinx.coroutines.*
 
-class MainViewModel: ViewModel() {
+class MainViewModel {
+
+
+    private val exptionhandle = CoroutineExceptionHandler { coroutineContext, throwable ->
+        println("Error dectetado de en el $throwable ")
+    }
+
+    private val lyceviewmodel = CoroutineScope(SupervisorJob() + exptionhandle)
+
+    private fun launch(onProcess: suspend () -> Unit): Job {
+        return lyceviewmodel.launch(Dispatchers.IO + NonCancellable) { onProcess() }
+    }
 
 
     var columnsItems = mutableStateListOf<COLUMN>()
@@ -27,7 +39,6 @@ class MainViewModel: ViewModel() {
 
     var isCurrentlyDragging: Boolean by mutableStateOf(false)
         private set
-
 
     init {
         columnsItems.add(COLUMN.TO_DO)
@@ -123,6 +134,10 @@ class MainViewModel: ViewModel() {
         Log.e("ADD : ", "----------------------------------")
         taskItems.clear()
         taskItems.addAll(newItems)
+    }
+
+    fun onDestroy() {
+        lyceviewmodel.cancel("Se termino la vida de uso", Exception("Termino"))
     }
 
 }

@@ -36,8 +36,7 @@ import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
 fun DragDropScreen(
-    context: Context,
-    mainViewModel: MainViewModel
+    context: Context
 ) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp

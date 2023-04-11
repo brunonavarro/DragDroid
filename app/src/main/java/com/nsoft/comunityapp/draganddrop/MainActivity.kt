@@ -21,7 +21,6 @@ import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
 
 class MainActivity : ComponentActivity() {
 
-    val mainViewModel = MainViewModel()
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +33,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White.copy(0.8f))
                 ) {
-                    DragDropScreen(mainViewModel = mainViewModel, context = applicationContext)
+                    DragDropScreen( context = applicationContext)
                 }
             }
         }
