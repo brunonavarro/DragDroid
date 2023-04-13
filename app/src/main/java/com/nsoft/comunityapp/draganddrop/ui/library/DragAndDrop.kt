@@ -1,5 +1,6 @@
 package com.nsoft.comunityapp.draganddrop.ui.library
 
+import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -18,9 +19,17 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 
 internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
+
+
+/**
+ * Clase exclusiva de Libreria
+ * * Construye el DropComponent
+ * * Construye el DragComponent
+ * * Animation Drag and Drop Component
+ * * Generic Entity Data Class
+ * **/
 
 /**Movimiento de componente**/
 @RequiresApi(Build.VERSION_CODES.M)
@@ -32,12 +41,12 @@ fun <T> DragTarget(
     dataToDrop: T,
     vibrator: Vibrator?,
     onStart: (
-        item: PersonUIItem,
+        item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition
     ) -> Unit,
     onEnd: (
-        item: PersonUIItem,
+        item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition
     ) -> Unit,
@@ -85,7 +94,7 @@ fun <T> DragTarget(
                         currentState.draggableComposable = content
 
                         onStart(
-                            dataToDrop as PersonUIItem,
+                            dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
                         )
@@ -104,7 +113,7 @@ fun <T> DragTarget(
                         currentState.isDragging = false
 
                         onEnd(
-                            dataToDrop as PersonUIItem,
+                            dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
                         )
@@ -116,7 +125,7 @@ fun <T> DragTarget(
                         currentState.isDragging = false
 
                         onEnd(
-                            dataToDrop as PersonUIItem,
+                            dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
                         )
@@ -245,3 +254,15 @@ open class ItemPosition(
 ) {
     fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }
+
+data class CustomComposableParams(
+    val context: Context,
+    val screenWidth: Int? = null,
+    val screenHeight: Int? = null,
+    val elevation: Int = 0,
+    val modifier: Modifier = Modifier,
+    val idColumn: Any? = null,
+    val rowList: List<Any>? = null,
+    val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null,
+    val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null
+)

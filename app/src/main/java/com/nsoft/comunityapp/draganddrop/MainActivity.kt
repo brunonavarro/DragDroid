@@ -7,15 +7,17 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.nsoft.comunityapp.draganddrop.ui.ColumnCard
 import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
+import com.nsoft.comunityapp.draganddrop.ui.Params
 import com.nsoft.comunityapp.draganddrop.ui.components.DragDropScreen
+import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
+import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 import com.nsoft.comunityapp.draganddrop.ui.library.DraggableScreen
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
 
@@ -27,6 +29,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            val rowListByGroup = mainViewModel.taskItems.groupBy { it.column }
+
             DragAndDropTheme {
                 // A surface container using the 'background' color from the theme
                 DraggableScreen(
@@ -34,7 +39,39 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White.copy(0.8f))
                 ) {
-                    DragDropScreen(mainViewModel = mainViewModel, context = applicationContext)
+                    DragDropScreen(
+                        context = applicationContext,
+                        columnsItems = mainViewModel.columnsItems,
+                        rowListByGroup = rowListByGroup,
+                        onStart = { item, row, column ->
+                            mainViewModel.startDragging(
+                                item as PersonUIItem,
+                                rowPosition = row,
+                                columnPosition = column
+                            )
+                        },
+                        onEnd = { item, row, column ->
+                            mainViewModel.endDragging(
+                                item as PersonUIItem,
+                                rowPosition = row,
+                                columnPosition = column
+                            )
+                        },
+                        updateBoard = { item, row, column ->
+                            mainViewModel.addPersons(item as PersonUIItem, row, column)
+                        }
+                    ) { params ->
+                        ColumnCard(
+                            Params.CustomParams(
+                                context = params.context, screenHeight = params.screenHeight,
+                                screenWidth = params.screenWidth, elevation = params.elevation,
+                                modifier = params.modifier, idColumn = params.idColumn as COLUMN,
+                                rowList = params.rowList as List<PersonUIItem>?,
+                                onStart = params.onStart,
+                                onEnd = params.onEnd
+                            )
+                        )
+                    }
                 }
             }
         }

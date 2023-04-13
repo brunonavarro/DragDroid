@@ -50,7 +50,7 @@ class MainViewModel: ViewModel() {
                 column = COLUMN.TO_DO
             )
         )
-//        taskItems.add(PersonUIItem("Bruno","2", Color.DarkGray, column = COLUMN.TO_DO))
+        taskItems.add(PersonUIItem("Bruno", 2, Color.DarkGray, column = COLUMN.TO_DO))
 
     }
 
