@@ -31,6 +31,7 @@ import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
 import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
+import com.nsoft.comunityapp.draganddrop.ui.util.rememberMainModel
 
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -38,7 +39,7 @@ import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
 fun DragDropScreen(
     context: Context
 ) {
-
+    val mainViewModel= rememberMainModel()
     val screenWidth = LocalConfiguration.current.screenWidthDp
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
@@ -139,7 +140,6 @@ fun ColumnCard(
         )
 
         Divider()
-
         LazyColumn(
             modifier = modifier
         ) {

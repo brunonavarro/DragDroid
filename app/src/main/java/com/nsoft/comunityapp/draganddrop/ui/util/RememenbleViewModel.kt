@@ -19,8 +19,5 @@ fun rememberMainModel():MainViewModel{
         }
     }
 
-
-
-
     return state
 }
