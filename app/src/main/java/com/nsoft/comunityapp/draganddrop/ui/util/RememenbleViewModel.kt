@@ -9,7 +9,7 @@ import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
 @Composable
 fun rememberMainModel():MainViewModel{
 
-    val state = rememberSaveable {
+    val state = remember {
         MainViewModel()
     }
 

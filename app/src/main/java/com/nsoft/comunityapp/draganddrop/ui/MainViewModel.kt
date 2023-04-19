@@ -45,8 +45,8 @@ class MainViewModel {
         private set
 
 
-    @PostConstruct
-    fun init() {
+
+     init{
         columnsItems.add(COLUMN.TO_DO)
         columnsItems.add(COLUMN.IN_PROGRESS)
         columnsItems.add(COLUMN.DEV_DONE)
