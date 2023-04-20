@@ -21,8 +21,14 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 
-internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo<COLUMN,COLUMN>() }
 
+
+@Composable
+fun <T>rememeberLocalDragTargetInfo():DragTargetInfo<T>{
+    return remember {
+        DragTargetInfo<T>()
+    }
+}
 
 /**
  * Clase exclusiva de Libreria
@@ -59,7 +65,7 @@ inline fun <T,reified K> DragTarget(
         mutableStateOf(Offset.Zero)
     }
 
-    val currentState = LocalDragTargetInfo.current
+    val currentState = rememeberLocalDragTargetInfo<T>()
 
     Box(
         modifier = params.modifier
@@ -92,11 +98,11 @@ inline fun <T,reified K> DragTarget(
                         currentState.dragPosition = currentPosition + it
 
                         currentState.columnPosition.from = params.columnIndex
-                        currentState.rowPosition.from =params. rowIndex
+                        currentState.rowPosition.from = params.rowIndex
 
                         currentState.draggableComposable = params.content
 
-                        params. onStart(
+                        params.onStart(
                             params.dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
@@ -107,28 +113,28 @@ inline fun <T,reified K> DragTarget(
                         currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
 
                         currentState.columnPosition.from = params.columnIndex
-                        currentState.rowPosition.from =params. rowIndex
+                        currentState.rowPosition.from = params.rowIndex
                     },
                     onDragEnd = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnPosition.from =params. columnIndex
-                        currentState.rowPosition.from = rowIndex
+                        currentState.columnPosition.from = params.columnIndex
+                        currentState.rowPosition.from = params.rowIndex
                         currentState.isDragging = false
 
-                        onEnd(
-                            dataToDrop,
+                        params.onEnd(
+                            params.dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
                         )
                     },
                     onDragCancel = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnPosition.from = columnIndex
-                        currentState.rowPosition.from = rowIndex
+                        currentState.columnPosition.from = params.columnIndex
+                        currentState.rowPosition.from = params.rowIndex
                         currentState.isDragging = false
 
-                        onEnd(
-                            dataToDrop,
+                        params.onEnd(
+                            params.dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
                         )
@@ -136,18 +142,18 @@ inline fun <T,reified K> DragTarget(
                 )
             }
     ) {
-        content()
+        params.content()
     }
 }
 
 
 /**ITEM QUE SOPORTA EL SOLTAR ITEM EN SU INTERIOR**/
 @Composable
-fun <T> DropItem(
+fun <T,K> DropItem(
     modifier: Modifier,
     rowIndex: Int,
-    columnIndex: Any,
-    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<COLUMN>) -> Unit)
+    columnIndex: K,
+    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<K>) -> Unit)
 ){
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
@@ -187,9 +193,7 @@ fun DraggableScreen(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
 ){
-    val state = remember {
-        DragTargetInfo()
-    }
+    val state = rememeberLocalDragTargetInfo<COLUMN>()
 
     CompositionLocalProvider(
         LocalDragTargetInfo provides state
@@ -225,12 +229,12 @@ fun DraggableScreen(
     }
 }
 
-internal class DragTargetInfo<T,K> {
+class DragTargetInfo<T> {
     var isDragging: Boolean by mutableStateOf(false)
     var dragPosition by mutableStateOf(Offset.Zero)
     var dragOffset by mutableStateOf(Offset.Zero)
     var draggableComposable by mutableStateOf<((@Composable () -> Unit)?)>(null)
-    var dataToDrop by mutableStateOf<K?>(null)
+    var dataToDrop by mutableStateOf<Any?>(null)
 
     var columnPosition by mutableStateOf(ColumnPosition<T>())
     var rowPosition by mutableStateOf(RowPosition())
@@ -251,9 +255,9 @@ data class RowPosition(
     fun canAdd() = from != to
 }
 
-open class ItemPosition(
+open class ItemPosition<T>(
     var rowPosition: RowPosition,
-    var columnPosition: ColumnPosition<COLUMN>
+    var columnPosition: ColumnPosition<T>
 ) {
     fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }

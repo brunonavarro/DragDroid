@@ -13,7 +13,7 @@ interface ItemUI<T> {
         index: Int,
         columnPosition: ColumnPosition<COLUMN>,
         rowPosition: RowPosition
-    ):Unit
+    )
 }
 
 
@@ -23,7 +23,7 @@ data class PersonUIItem(
     override var backgroundColor: Color,
     var isDraggable: Boolean = false,
     override var column: COLUMN = COLUMN.TO_DO
-) : ItemUI<PersonUIItem>, ItemPosition(
+) : ItemUI<PersonUIItem>, ItemPosition<COLUMN>(
     rowPosition = RowPosition(),
     columnPosition = ColumnPosition(from = column)
 ) {
@@ -37,7 +37,9 @@ data class PersonUIItem(
         personUIItem.id = index
         personUIItem.rowPosition.from = index
         personUIItem.rowPosition.to = rowPosition.to
-        personUIItem.column = columnPosition.to as COLUMN
+        columnPosition.to?.let {
+            personUIItem.column = it
+        }
         personUIItem.columnPosition.from = columnPosition.from
         personUIItem.columnPosition.to = columnPosition.to
     }
