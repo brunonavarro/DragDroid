@@ -5,22 +5,33 @@ import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.ItemPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 
+interface ItemUI<T> {
+    var column: COLUMN
+    var backgroundColor: Color
+    fun updateItem(
+        personUIItem: T,
+        index: Int,
+        columnPosition: ColumnPosition<COLUMN>,
+        rowPosition: RowPosition
+    ):Unit
+}
+
 
 data class PersonUIItem(
     var name: String,
     var id: Int = 0,
-    var backgroundColor: Color,
+    override var backgroundColor: Color,
     var isDraggable: Boolean = false,
-    var column: COLUMN = COLUMN.TO_DO
-) : ItemPosition(
+    override var column: COLUMN = COLUMN.TO_DO
+) : ItemUI<PersonUIItem>, ItemPosition(
     rowPosition = RowPosition(),
     columnPosition = ColumnPosition(from = column)
 ) {
 
-    fun updateItem(
+    override fun updateItem(
         personUIItem: PersonUIItem,
         index: Int,
-        columnPosition: ColumnPosition,
+        columnPosition: ColumnPosition<COLUMN>,
         rowPosition: RowPosition
     ) {
         personUIItem.id = index
@@ -33,7 +44,7 @@ data class PersonUIItem(
 
 }
 
-enum class COLUMN{
+enum class COLUMN {
     TO_DO,
     IN_PROGRESS,
     DEV_DONE

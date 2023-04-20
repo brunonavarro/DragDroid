@@ -19,8 +19,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 
-internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
+internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo<COLUMN,COLUMN>() }
 
 
 /**
@@ -31,26 +32,28 @@ internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
  * * Generic Entity Data Class
  * **/
 
+data class DataParams<T,K>( val modifier: Modifier = Modifier,
+                      val rowIndex: Int,
+                      val columnIndex: K,
+                      val dataToDrop: T,
+                     val  vibrator: Vibrator?,
+                      val onStart:  (
+                           item: T,
+                           rowPosition: RowPosition,
+                           columnPosition: ColumnPosition<K>
+                       ) -> Unit,
+                     val  onEnd: (
+                           item: T,
+                           rowPosition: RowPosition,
+                           columnPosition: ColumnPosition<K>
+                       ) -> Unit,
+                     val  content: @Composable (() -> Unit))
+
 /**Movimiento de componente**/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun <T> DragTarget(
-    modifier: Modifier = Modifier,
-    rowIndex: Int,
-    columnIndex: Any,
-    dataToDrop: T,
-    vibrator: Vibrator?,
-    onStart: (
-        item: T,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition
-    ) -> Unit,
-    onEnd: (
-        item: T,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition
-    ) -> Unit,
-    content: @Composable (() -> Unit)
+inline fun <T,reified K> DragTarget(
+   params: DataParams<T,K>
 ) {
     var currentPosition by remember {
         mutableStateOf(Offset.Zero)
@@ -59,14 +62,14 @@ fun <T> DragTarget(
     val currentState = LocalDragTargetInfo.current
 
     Box(
-        modifier = modifier
+        modifier = params.modifier
             .onGloballyPositioned {
                 currentPosition = it.localToWindow(Offset.Zero)
             }
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = {
-                        if (vibrator != null) {
+                        if (params.vibrator != null) {
                             val vibrationEffect1: VibrationEffect =
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     VibrationEffect.createOneShot(
@@ -80,21 +83,21 @@ fun <T> DragTarget(
 
                             // it is safe to cancel other
                             // vibrations currently taking place
-                            vibrator.cancel()
-                            vibrator.vibrate(vibrationEffect1)
+                            params.vibrator.cancel()
+                            params.vibrator.vibrate(vibrationEffect1)
                         }
 
-                        currentState.dataToDrop = dataToDrop
+                        currentState.dataToDrop = params.dataToDrop
                         currentState.isDragging = true
                         currentState.dragPosition = currentPosition + it
 
-                        currentState.columnPosition.from = columnIndex
-                        currentState.rowPosition.from = rowIndex
+                        currentState.columnPosition.from = params.columnIndex
+                        currentState.rowPosition.from =params. rowIndex
 
-                        currentState.draggableComposable = content
+                        currentState.draggableComposable = params.content
 
-                        onStart(
-                            dataToDrop,
+                        params. onStart(
+                            params.dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition
                         )
@@ -103,12 +106,12 @@ fun <T> DragTarget(
                         change.consumeAllChanges()
                         currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
 
-                        currentState.columnPosition.from = columnIndex
-                        currentState.rowPosition.from = rowIndex
+                        currentState.columnPosition.from = params.columnIndex
+                        currentState.rowPosition.from =params. rowIndex
                     },
                     onDragEnd = {
                         currentState.dragOffset = Offset.Zero
-                        currentState.columnPosition.from = columnIndex
+                        currentState.columnPosition.from =params. columnIndex
                         currentState.rowPosition.from = rowIndex
                         currentState.isDragging = false
 
@@ -144,7 +147,7 @@ fun <T> DropItem(
     modifier: Modifier,
     rowIndex: Int,
     columnIndex: Any,
-    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition) -> Unit)
+    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<COLUMN>) -> Unit)
 ){
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
@@ -222,21 +225,21 @@ fun DraggableScreen(
     }
 }
 
-internal class DragTargetInfo {
+internal class DragTargetInfo<T,K> {
     var isDragging: Boolean by mutableStateOf(false)
     var dragPosition by mutableStateOf(Offset.Zero)
     var dragOffset by mutableStateOf(Offset.Zero)
     var draggableComposable by mutableStateOf<((@Composable () -> Unit)?)>(null)
-    var dataToDrop by mutableStateOf<Any?>(null)
+    var dataToDrop by mutableStateOf<K?>(null)
 
-    var columnPosition by mutableStateOf(ColumnPosition())
+    var columnPosition by mutableStateOf(ColumnPosition<T>())
     var rowPosition by mutableStateOf(RowPosition())
 
 }
 
-data class ColumnPosition(
-    var from: Any? = null,
-    var to: Any? = null
+data class ColumnPosition<K>(
+    var from: K? = null,
+    var to: K? = null
 ) {
     fun canAdd() = from != to
 }
@@ -250,7 +253,7 @@ data class RowPosition(
 
 open class ItemPosition(
     var rowPosition: RowPosition,
-    var columnPosition: ColumnPosition
+    var columnPosition: ColumnPosition<COLUMN>
 ) {
     fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }
@@ -263,6 +266,6 @@ data class CustomComposableParams(
     val modifier: Modifier = Modifier,
     val idColumn: Any? = null,
     val rowList: List<Any>? = null,
-    val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null,
-    val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null
+    val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null,
+    val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null
 )

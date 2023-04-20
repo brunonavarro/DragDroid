@@ -5,15 +5,16 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
+import com.nsoft.comunityapp.draganddrop.ui.entities.ItemUI
 
 @Composable
-fun rememberMainModel():MainViewModel{
+inline fun <reified T:ItemUI<T>> rememberMainModel(): MainViewModel<T> {
 
     val state = remember {
-        MainViewModel()
+        MainViewModel<T>()
     }
 
-    DisposableEffect(Unit){
+    DisposableEffect(Unit) {
         onDispose {
             state.onDestroy()
         }

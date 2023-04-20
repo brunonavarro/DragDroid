@@ -35,12 +35,12 @@ fun DragDropScreen(
     context: Context,
     columnsItems: List<Any>,
     rowListByGroup: Map<COLUMN, List<PersonUIItem>>,
-    onStart: (item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit,
-    onEnd: (item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit,
+    onStart: (item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit,
+    onEnd: (item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit,
     updateBoard: (
         item: Any,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) -> Unit,
     customComposable: @Composable
         (

@@ -8,14 +8,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
+import com.nsoft.comunityapp.draganddrop.ui.entities.ItemUI
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.annotation.PostConstruct
 
-class MainViewModel {
+
+class MainViewModel<T : ItemUI<T>> {
 
 
     private val exptionhandle = CoroutineExceptionHandler { coroutineContext, throwable ->
@@ -27,56 +28,31 @@ class MainViewModel {
     private fun launch(onProcess: suspend () -> Unit): Job {
         return lyceviewmodel.launch(Dispatchers.IO + NonCancellable) { onProcess() }
     }
-    var _columnsItems = MutableStateFlow<List<COLUMN>>(listOf())
 
-
-
-    var columnsItems = mutableStateListOf<COLUMN>()
+    var columnsItems = MutableStateFlow<List<COLUMN>>(listOf())
         private set
 
-    var taskItems = mutableStateListOf<PersonUIItem>()
+
+    var taskItems = MutableStateFlow<List<T>>(listOf())
         private set
 
     // Estado para realizar un seguimiento de la tarea actualmente arrastrada
-    var draggedTask = mutableStateOf<PersonUIItem?>(null)
+    var draggedTask = MutableStateFlow<T?>(null)
         private set
 
     var isCurrentlyDragging: Boolean by mutableStateOf(false)
         private set
 
 
-
-     init{
-        columnsItems.add(COLUMN.TO_DO)
-        columnsItems.add(COLUMN.IN_PROGRESS)
-        columnsItems.add(COLUMN.DEV_DONE)
-
-        taskItems.add(
-            PersonUIItem(
-                "Michael",
-                id = 0,
-                backgroundColor = Color.DarkGray,
-                column = COLUMN.TO_DO
-            )
-        )
-        taskItems.add(
-            PersonUIItem(
-                "Larissa",
-                id = 1,
-                backgroundColor = Color.DarkGray,
-                column = COLUMN.TO_DO
-            )
-        )
-        taskItems.add(PersonUIItem("Bruno", 2, Color.DarkGray, column = COLUMN.TO_DO))
-
+    init {
+        columnsItems.value = listOf(COLUMN.TO_DO, COLUMN.IN_PROGRESS, COLUMN.DEV_DONE)
     }
 
     fun startDragging(
-        item: PersonUIItem,
+        item: T,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) {
-        columnPosition.from as COLUMN
 
         rowPosition.to as Int
         rowPosition.from as Int
@@ -85,11 +61,11 @@ class MainViewModel {
 
         draggedTask.value = item
 
-        Log.e("START DRAG", item.name)
+
     }
 
-    fun endDragging(item: PersonUIItem, rowPosition: RowPosition, columnPosition: ColumnPosition) {
-        columnPosition.from as COLUMN
+    fun  endDragging(item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) {
+        columnPosition.from
 
         rowPosition.to as Int
         rowPosition.from as Int
@@ -98,20 +74,18 @@ class MainViewModel {
 
         draggedTask.value = null
 
-        Log.e("END DRAG", item.name)
     }
 
     fun addPersons(
-        item: PersonUIItem,
+        item: T,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) {
-        columnPosition.to as COLUMN
-        columnPosition.from as COLUMN
 
-        val newItems = mutableListOf<PersonUIItem>()
 
-        taskItems.forEachIndexed { index, personUIItem ->
+        val newItems = mutableListOf<T>()
+
+        taskItems.value.forEachIndexed { index, personUIItem ->
             if (
                 personUIItem == item
             ) {
@@ -138,8 +112,8 @@ class MainViewModel {
         }
         Log.e("ADD NEW LIST: ", newItems.toString())
         Log.e("ADD : ", "----------------------------------")
-        taskItems.clear()
-        taskItems.addAll(newItems)
+        taskItems.value = newItems
+
     }
 
     fun onDestroy() {
