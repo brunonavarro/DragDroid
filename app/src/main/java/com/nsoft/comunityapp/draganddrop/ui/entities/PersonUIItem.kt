@@ -17,17 +17,8 @@ interface ItemUI<T> {
 }
 
 
-data class PersonUIItem(
-    var name: String,
-    var id: Int = 0,
-    override var backgroundColor: Color,
-    var isDraggable: Boolean = false,
-    override var column: COLUMN = COLUMN.TO_DO
-) : ItemUI<PersonUIItem>, ItemPosition<COLUMN>(
-    rowPosition = RowPosition(),
-    columnPosition = ColumnPosition(from = column)
-) {
-
+class PersonUIItemIMPl(override var column: COLUMN, override var backgroundColor: Color):ItemUI<PersonUIItem>
+{
     override fun updateItem(
         personUIItem: PersonUIItem,
         index: Int,
@@ -45,6 +36,17 @@ data class PersonUIItem(
     }
 
 }
+
+data class PersonUIItem(
+    var name: String,
+    var id: Int = 0,
+    override var backgroundColor: Color,
+    var isDraggable: Boolean = false,
+    override var column: COLUMN = COLUMN.TO_DO
+) : ItemUI<PersonUIItem> by PersonUIItemIMPl(column,backgroundColor) , ItemPosition<COLUMN>(
+    rowPosition = RowPosition(),
+    columnPosition = ColumnPosition(from = column)
+)
 
 enum class COLUMN {
     TO_DO,
