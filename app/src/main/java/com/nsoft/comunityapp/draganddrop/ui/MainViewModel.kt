@@ -11,8 +11,24 @@ import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import javax.annotation.PostConstruct
 
-class MainViewModel: ViewModel() {
+class MainViewModel {
+
+
+    private val exptionhandle = CoroutineExceptionHandler { coroutineContext, throwable ->
+        println("Error dectetado de en el $throwable ")
+    }
+
+    private val lyceviewmodel = CoroutineScope(SupervisorJob() + exptionhandle)
+
+    private fun launch(onProcess: suspend () -> Unit): Job {
+        return lyceviewmodel.launch(Dispatchers.IO + NonCancellable) { onProcess() }
+    }
+    var _columnsItems = MutableStateFlow<List<COLUMN>>(listOf())
+
 
 
     var columnsItems = mutableStateListOf<COLUMN>()
@@ -29,7 +45,8 @@ class MainViewModel: ViewModel() {
         private set
 
 
-    init {
+
+     init{
         columnsItems.add(COLUMN.TO_DO)
         columnsItems.add(COLUMN.IN_PROGRESS)
         columnsItems.add(COLUMN.DEV_DONE)
@@ -123,6 +140,10 @@ class MainViewModel: ViewModel() {
         Log.e("ADD : ", "----------------------------------")
         taskItems.clear()
         taskItems.addAll(newItems)
+    }
+
+    fun onDestroy() {
+        lyceviewmodel.cancel("Se termino la vida de uso", Exception("Termino"))
     }
 
 }
