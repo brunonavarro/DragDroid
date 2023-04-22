@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.CustomComposableParams
 import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
@@ -31,20 +30,20 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun DragDropScreen(
+fun <T> DragDropScreen(
     context: Context,
-    columnsItems: List<Any>,
-    rowListByGroup: Map<COLUMN, List<PersonUIItem>>,
-    onStart: (item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit,
-    onEnd: (item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit,
+    columnsItems: List<COLUMN>,
+    rowListByGroup: Map<COLUMN, List<T>>,
+    onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit,
+    onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit,
     updateBoard: (
-        item: Any,
+        item: T,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) -> Unit,
     customComposable: @Composable
         (
-        params: CustomComposableParams
+        params: CustomComposableParams<T>
     ) -> Unit
 ) {
 
@@ -59,7 +58,7 @@ fun DragDropScreen(
         items(columnList.keys.toList(), key = { it }) { column ->
             val rowList = rowListByGroup[column] ?: emptyList()
             // Crear un LazyColumn para representar las filas de tarjetas de tarea
-            DropItem<Any>(
+            DropItem<T>(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
@@ -77,7 +76,7 @@ fun DragDropScreen(
                 }
                 if (isInBound) {
                     customComposable(
-                        CustomComposableParams(
+                        CustomComposableParams<T>(
                             context = context,
                             idColumn = column, elevation = 6, screenWidth = screenWidth,
                             screenHeight = screenHeight, rowList = rowList,

@@ -17,7 +17,7 @@ import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
 import com.nsoft.comunityapp.draganddrop.ui.Params
 import com.nsoft.comunityapp.draganddrop.ui.components.DragDropScreen
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
+import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.library.DraggableScreen
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
 
@@ -39,26 +39,26 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White.copy(0.8f))
                 ) {
-                    DragDropScreen(
+                    DragDropScreen<DragItem>(
                         context = applicationContext,
                         columnsItems = mainViewModel.columnsItems,
                         rowListByGroup = rowListByGroup,
                         onStart = { item, row, column ->
                             mainViewModel.startDragging(
-                                item as PersonUIItem,
+                                item,
                                 rowPosition = row,
                                 columnPosition = column
                             )
                         },
                         onEnd = { item, row, column ->
                             mainViewModel.endDragging(
-                                item as PersonUIItem,
+                                item,
                                 rowPosition = row,
                                 columnPosition = column
                             )
                         },
                         updateBoard = { item, row, column ->
-                            mainViewModel.addPersons(item as PersonUIItem, row, column)
+                            mainViewModel.addPersons(item, row, column)
                         }
                     ) { params ->
                         ColumnCard(
@@ -66,9 +66,13 @@ class MainActivity : ComponentActivity() {
                                 context = params.context, screenHeight = params.screenHeight,
                                 screenWidth = params.screenWidth, elevation = params.elevation,
                                 modifier = params.modifier, idColumn = params.idColumn as COLUMN,
-                                rowList = params.rowList as List<PersonUIItem>?,
-                                onStart = params.onStart,
-                                onEnd = params.onEnd
+                                rowList = params.rowList,
+                                onStart = { item, row, column ->
+                                    params.onStart
+                                },
+                                onEnd = { item, row, column ->
+                                    params.onEnd
+                                }
                             )
                         )
                     }

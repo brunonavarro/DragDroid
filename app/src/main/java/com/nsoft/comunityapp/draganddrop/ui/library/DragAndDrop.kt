@@ -19,6 +19,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 
 internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
 
@@ -37,18 +38,18 @@ internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
 fun <T> DragTarget(
     modifier: Modifier = Modifier,
     rowIndex: Int,
-    columnIndex: Any,
+    columnIndex: COLUMN,
     dataToDrop: T,
     vibrator: Vibrator?,
     onStart: (
         item: T,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) -> Unit,
     onEnd: (
         item: T,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) -> Unit,
     content: @Composable (() -> Unit)
 ) {
@@ -143,8 +144,8 @@ fun <T> DragTarget(
 fun <T> DropItem(
     modifier: Modifier,
     rowIndex: Int,
-    columnIndex: Any,
-    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition) -> Unit)
+    columnIndex: COLUMN,
+    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<COLUMN>) -> Unit)
 ){
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
@@ -229,14 +230,14 @@ internal class DragTargetInfo {
     var draggableComposable by mutableStateOf<((@Composable () -> Unit)?)>(null)
     var dataToDrop by mutableStateOf<Any?>(null)
 
-    var columnPosition by mutableStateOf(ColumnPosition())
+    var columnPosition by mutableStateOf(ColumnPosition<COLUMN>())
     var rowPosition by mutableStateOf(RowPosition())
 
 }
 
-data class ColumnPosition(
-    var from: Any? = null,
-    var to: Any? = null
+data class ColumnPosition<K>(
+    var from: K? = null,
+    var to: K? = null
 ) {
     fun canAdd() = from != to
 }
@@ -248,21 +249,21 @@ data class RowPosition(
     fun canAdd() = from != to
 }
 
-open class ItemPosition(
+open class ItemPosition<T>(
     var rowPosition: RowPosition,
-    var columnPosition: ColumnPosition
+    var columnPosition: ColumnPosition<T>
 ) {
     fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }
 
-data class CustomComposableParams(
+data class CustomComposableParams<T>(
     val context: Context,
     val screenWidth: Int? = null,
     val screenHeight: Int? = null,
     val elevation: Int = 0,
     val modifier: Modifier = Modifier,
-    val idColumn: Any? = null,
-    val rowList: List<Any>? = null,
-    val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null,
-    val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null
+    val idColumn: COLUMN? = null,
+    val rowList: List<T>? = null,
+    val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null,
+    val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null
 )

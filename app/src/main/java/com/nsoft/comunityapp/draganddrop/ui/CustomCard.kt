@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
+import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
@@ -112,8 +112,8 @@ sealed class Params {
         val elevation: Int = 0,
         val modifier: Modifier = Modifier,
         val idColumn: COLUMN? = null,
-        val rowList: List<PersonUIItem>? = null,
-        val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null,
-        val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition) -> Unit)? = null
+        val rowList: List<DragItem>? = null,
+        val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null,
+        val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null
     )
 }
