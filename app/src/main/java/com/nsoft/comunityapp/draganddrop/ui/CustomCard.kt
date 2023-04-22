@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023. Esto pertenece a codigo de Libreria Compose con objetivo a desarrollos de Arrastre y Soltar.
+ * Los derechos de comercialización son reservados en discución con el equipo colaborador.
+ * By BrunoNavarro
+ */
+
 package com.nsoft.comunityapp.draganddrop.ui
 
 import android.content.Context
@@ -28,7 +34,8 @@ import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 
 /**
- * Clase para agregar un UI customizado del card de las tareas
+ * Clase CustomUIDragItem
+ * del card de las tareas
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
@@ -63,7 +70,7 @@ fun ColumnCard(
                         val vibrator =
                             params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                         personUIItem.columnPosition.from = params.idColumn
-                        DragTarget(
+                        DragTarget<DragItem, COLUMN>(
                             rowIndex = personUIItem.rowPosition.from ?: 0,
                             columnIndex = personUIItem.columnPosition.from as COLUMN,
                             dataToDrop = personUIItem,
@@ -113,7 +120,7 @@ sealed class Params {
         val modifier: Modifier = Modifier,
         val idColumn: COLUMN? = null,
         val rowList: List<DragItem>? = null,
-        val onStart: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null,
-        val onEnd: ((item: Any, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null
+        val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null,
+        val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null
     )
 }

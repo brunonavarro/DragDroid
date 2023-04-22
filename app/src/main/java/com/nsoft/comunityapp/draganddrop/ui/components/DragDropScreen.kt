@@ -30,20 +30,20 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun <T> DragDropScreen(
+fun <T, K> DragDropScreen(
     context: Context,
     columnsItems: List<COLUMN>,
     rowListByGroup: Map<COLUMN, List<T>>,
-    onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit,
-    onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit,
+    onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
     updateBoard: (
         item: T,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition<COLUMN>
+        columnPosition: ColumnPosition<K>
     ) -> Unit,
     customComposable: @Composable
         (
-        params: CustomComposableParams<T>
+        params: CustomComposableParams<T, K>
     ) -> Unit
 ) {
 
@@ -58,7 +58,7 @@ fun <T> DragDropScreen(
         items(columnList.keys.toList(), key = { it }) { column ->
             val rowList = rowListByGroup[column] ?: emptyList()
             // Crear un LazyColumn para representar las filas de tarjetas de tarea
-            DropItem<T>(
+            DropItem<T, K>(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
@@ -76,9 +76,9 @@ fun <T> DragDropScreen(
                 }
                 if (isInBound) {
                     customComposable(
-                        CustomComposableParams<T>(
+                        CustomComposableParams<T, K>(
                             context = context,
-                            idColumn = column, elevation = 6, screenWidth = screenWidth,
+                            idColumn = column as K, elevation = 6, screenWidth = screenWidth,
                             screenHeight = screenHeight, rowList = rowList,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -94,9 +94,9 @@ fun <T> DragDropScreen(
                     )
                 } else {
                     customComposable(
-                        CustomComposableParams(
+                        CustomComposableParams<T, K>(
                             context = context,
-                            idColumn = column, elevation = 6, screenWidth = screenWidth,
+                            idColumn = column as K, elevation = 6, screenWidth = screenWidth,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)

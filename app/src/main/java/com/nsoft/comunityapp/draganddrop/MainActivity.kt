@@ -25,6 +25,8 @@ class MainActivity : ComponentActivity() {
 
     val mainViewModel = MainViewModel()
 
+    /** Aqui se declara el tipo de data que procesará la libreria*/
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White.copy(0.8f))
                 ) {
-                    DragDropScreen<DragItem>(
+                    DragDropScreen<DragItem, COLUMN>(
                         context = applicationContext,
                         columnsItems = mainViewModel.columnsItems,
                         rowListByGroup = rowListByGroup,
