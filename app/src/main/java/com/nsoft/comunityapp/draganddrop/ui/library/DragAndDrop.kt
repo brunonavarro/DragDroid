@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 
-internal val LocalDragTargetInfo = localDragTargetInfo<Any, Any>()
+val LocalDragTargetInfo = localDragTargetInfo<Any, Any>()
 
 inline fun <reified T, reified K> localDragTargetInfo(): ProvidableCompositionLocal<DragTargetInfo<T, K>> {
     return compositionLocalOf { DragTargetInfo() }
@@ -38,23 +38,23 @@ inline fun <reified T, reified K> localDragTargetInfo(): ProvidableCompositionLo
 /**Movimiento de componente**/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun <T, K> DragTarget(
+inline fun <reified T, reified K> DragTarget(
     modifier: Modifier = Modifier,
     rowIndex: Int,
     columnIndex: K,
     dataToDrop: T,
     vibrator: Vibrator?,
-    onStart: (
+    crossinline onStart: (
         item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    onEnd: (
+    crossinline onEnd: (
         item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    content: @Composable (() -> Unit)
+    noinline content: @Composable (() -> Unit)
 ) {
     var currentPosition by remember {
         mutableStateOf(Offset.Zero)
@@ -144,7 +144,7 @@ fun <T, K> DragTarget(
 
 /**ITEM QUE SOPORTA EL SOLTAR ITEM EN SU INTERIOR**/
 @Composable
-fun <T, K> DropItem(
+inline fun <reified T, reified K> DropItem(
     modifier: Modifier,
     rowIndex: Int,
     columnIndex: COLUMN,

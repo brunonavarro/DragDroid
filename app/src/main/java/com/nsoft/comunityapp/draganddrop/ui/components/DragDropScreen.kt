@@ -30,18 +30,18 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun <T, K> DragDropScreen(
+inline fun <reified T, reified K> DragDropScreen(
     context: Context,
     columnsItems: List<COLUMN>,
     rowListByGroup: Map<COLUMN, List<T>>,
-    onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    updateBoard: (
+    noinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    noinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    crossinline updateBoard: (
         item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    customComposable: @Composable
+    crossinline customComposable: @Composable
         (
         params: CustomComposableParams<T, K>
     ) -> Unit
