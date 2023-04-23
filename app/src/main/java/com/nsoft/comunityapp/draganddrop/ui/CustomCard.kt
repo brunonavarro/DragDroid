@@ -64,7 +64,7 @@ fun ColumnCard(
                     modifier = params.modifier
                 ) {
                     items(params.rowList ?: listOf(), key = {
-                        it.id
+                        it.rowPosition.from ?: 0
                     }) { personUIItem ->
                         // Elemento de tarjeta de tarea
                         val vibrator =

@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.CustomComposableParams
 import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
@@ -30,18 +29,18 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun <T, K> DragDropScreen(
+inline fun <reified T, reified K : Any> DragDropScreen(
     context: Context,
-    columnsItems: List<COLUMN>,
-    rowListByGroup: Map<COLUMN, List<T>>,
-    onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    updateBoard: (
+    columnsItems: List<K>,
+    rowListByGroup: Map<K, List<T>>,
+    noinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    noinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    crossinline updateBoard: (
         item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    customComposable: @Composable
+    crossinline customComposable: @Composable
         (
         params: CustomComposableParams<T, K>
     ) -> Unit
