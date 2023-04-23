@@ -2,194 +2,111 @@ package com.nsoft.comunityapp.draganddrop.ui.components
 
 import android.content.Context
 import android.os.Build
-import android.os.Vibrator
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
-import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
+import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.CustomComposableParams
 import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
+import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 
 
+/**
+ * Clase exclusiva de Libreria
+ * * Construye el Board estilo Jira
+ * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun DragDropScreen(
+fun <T, K> DragDropScreen(
     context: Context,
-    mainViewModel: MainViewModel
+    columnsItems: List<COLUMN>,
+    rowListByGroup: Map<COLUMN, List<T>>,
+    onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    updateBoard: (
+        item: T,
+        rowPosition: RowPosition,
+        columnPosition: ColumnPosition<K>
+    ) -> Unit,
+    customComposable: @Composable
+        (
+        params: CustomComposableParams<T, K>
+    ) -> Unit
 ) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
-
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
     // Agrupar las tareas por estado
-    val columnByStatus = mainViewModel.columnsItems.groupBy { it }
-    val tasksByStatus = mainViewModel.taskItems.groupBy { it.column }
+    val columnList = columnsItems.groupBy { it }
 
     // Crear un LazyColumn para representar las columnas de estado
     LazyRow(Modifier.fillMaxWidth()) {
-        items(columnByStatus.keys.toList(), key = { it }) { column ->
-            val tasksInStatus = tasksByStatus[column] ?: emptyList()
+        items(columnList.keys.toList(), key = { it }) { column ->
+            val rowList = rowListByGroup[column] ?: emptyList()
             // Crear un LazyColumn para representar las filas de tarjetas de tarea
-            DropItem<PersonUIItem>(
+            DropItem<T, K>(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                rowIndex = tasksByStatus.size,
+                rowIndex = rowListByGroup.size,
                 columnIndex = column
             ) { isInBound, personItem, rowPosition, columnPosition ->
-
                 LaunchedEffect(key1 = personItem != null, key2 = isInBound) {
                     if (isInBound && personItem != null) {
-                        Log.e("LAUNCHED EFFECT: ", "personItem $personItem")
-                        Log.e("LAUNCHED EFFECT: ", "isInBound $isInBound")
-                        Log.e(
-                            "LAUNCHED EFFECT: ",
-                            "------------------------------------------------------------"
-                        )
-                        mainViewModel.addPersons(
+                        updateBoard(
                             personItem,
                             rowPosition,
                             columnPosition
                         )
                     }
                 }
-
                 if (isInBound) {
-                    ColumnCard(
-                        context = context,
-                        mainViewModel = mainViewModel,
-                        screenWidth = screenWidth,
-                        screenHeight = screenHeight,
-                        idColumn = column,
-                        elevation = 6,
-                        taskItems = tasksInStatus,
-                        modifier = Modifier
-                            .width(120.dp)
-                            .padding(8.dp)
-                            .border(
-                                1.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(15.dp)
-                            )
-                            .background(Color.Transparent.copy(alpha = 0.2f))
+                    customComposable(
+                        CustomComposableParams<T, K>(
+                            context = context,
+                            idColumn = column as K, elevation = 6, screenWidth = screenWidth,
+                            screenHeight = screenHeight, rowList = rowList,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .border(
+                                    1.dp,
+                                    color = Color.Black,
+                                    shape = RoundedCornerShape(15.dp)
+                                )
+                                .background(Color.Transparent.copy(alpha = 0.2f)),
+                            onStart = onStart, onEnd = onEnd
+                        )
                     )
                 } else {
-                    ColumnCard(
-                        context = context,
-                        mainViewModel = mainViewModel,
-                        screenWidth = screenWidth,
-                        screenHeight = screenHeight,
-                        idColumn = column,
-                        taskItems = tasksInStatus,
-                        modifier = Modifier
-                            .width(120.dp)
-                            .padding(8.dp)
-                            .background(Color.LightGray.copy(alpha = 0.2f))
+                    customComposable(
+                        CustomComposableParams<T, K>(
+                            context = context,
+                            idColumn = column as K, elevation = 6, screenWidth = screenWidth,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .background(Color.LightGray.copy(alpha = 0.2f)),
+                            screenHeight = screenHeight, rowList = rowList,
+                            onStart = onStart, onEnd = onEnd
+                        )
                     )
                 }
             }
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.M)
-@Composable
-fun ColumnCard(
-    context: Context,
-    screenWidth: Int,
-    screenHeight: Int,
-    elevation: Int = 0,
-    modifier: Modifier = Modifier,
-    idColumn: COLUMN,
-    taskItems: List<PersonUIItem>,
-    mainViewModel: MainViewModel
-) {
-
-    Column {
-
-        // Encabezado de estado
-        Text(
-            text = idColumn.name,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Divider()
-
-        LazyColumn(
-            modifier = modifier
-        ) {
-
-            items(taskItems, key = {
-                it.id
-            }) { personUIItem ->
-                // Elemento de tarjeta de tarea
-                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                /**validar si es de utilidad**/
-                personUIItem.columnPosition.from = idColumn
-                DragTarget(
-                    rowIndex = personUIItem.rowPosition.from ?: 0,
-                    columnIndex = personUIItem.columnPosition.from as COLUMN,
-                    dataToDrop = personUIItem,
-                    vibrator = vibrator,
-                    onStart = { dragItem, rowPosition, columnPosition ->
-                        mainViewModel.startDragging(dragItem, rowPosition, columnPosition)
-                    },
-                    onEnd = { dragItem, rowPosition, columnPosition ->
-                        mainViewModel.endDragging(dragItem, rowPosition, columnPosition)
-                    }
-                ) {
-                        Card(
-                            backgroundColor = personUIItem.backgroundColor,
-                            modifier = Modifier
-                                .width(Dp(screenWidth / 2.8f))
-                                .height(Dp(screenHeight / 5f))
-                                .padding(8.dp)
-                                .shadow(elevation.dp, RoundedCornerShape(15.dp))
-                        ) {
-                            Column(Modifier.padding(16.dp)) {
-                                Text(
-                                    text = personUIItem.name,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                Text(
-                                    text = personUIItem.column.name,
-                                    color = Color.White,
-                                    modifier = Modifier.align(Alignment.End)
-                                )
-                            }
-                        }
-                    }
-                }
-
         }
     }
 }

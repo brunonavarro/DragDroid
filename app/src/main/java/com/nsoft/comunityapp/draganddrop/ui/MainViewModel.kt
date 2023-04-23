@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
-import com.nsoft.comunityapp.draganddrop.ui.entities.PersonUIItem
+import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 
@@ -18,11 +18,11 @@ class MainViewModel: ViewModel() {
     var columnsItems = mutableStateListOf<COLUMN>()
         private set
 
-    var taskItems = mutableStateListOf<PersonUIItem>()
+    var taskItems = mutableStateListOf<DragItem>()
         private set
 
     // Estado para realizar un seguimiento de la tarea actualmente arrastrada
-    var draggedTask = mutableStateOf<PersonUIItem?>(null)
+    var draggedTask = mutableStateOf<DragItem?>(null)
         private set
 
     var isCurrentlyDragging: Boolean by mutableStateOf(false)
@@ -35,34 +35,34 @@ class MainViewModel: ViewModel() {
         columnsItems.add(COLUMN.DEV_DONE)
 
         taskItems.add(
-            PersonUIItem(
+            DragItem(
                 "Michael",
                 id = 0,
                 backgroundColor = Color.DarkGray,
-                column = COLUMN.TO_DO
+//                column = COLUMN.TO_DO
             )
         )
         taskItems.add(
-            PersonUIItem(
+            DragItem(
                 "Larissa",
                 id = 1,
                 backgroundColor = Color.DarkGray,
-                column = COLUMN.TO_DO
+//                column = COLUMN.TO_DO
             )
         )
-//        taskItems.add(PersonUIItem("Bruno","2", Color.DarkGray, column = COLUMN.TO_DO))
+        taskItems.add(DragItem("Bruno", 2, Color.DarkGray, column = COLUMN.TO_DO))
 
     }
 
     fun startDragging(
-        item: PersonUIItem,
+        item: DragItem,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) {
-        columnPosition.from as COLUMN
+        columnPosition.from
 
-        rowPosition.to as Int
-        rowPosition.from as Int
+        rowPosition.to
+        rowPosition.from
 
         isCurrentlyDragging = true
 
@@ -71,11 +71,15 @@ class MainViewModel: ViewModel() {
         Log.e("START DRAG", item.name)
     }
 
-    fun endDragging(item: PersonUIItem, rowPosition: RowPosition, columnPosition: ColumnPosition) {
-        columnPosition.from as COLUMN
+    fun endDragging(
+        item: DragItem,
+        rowPosition: RowPosition,
+        columnPosition: ColumnPosition<COLUMN>
+    ) {
+        columnPosition.from
 
-        rowPosition.to as Int
-        rowPosition.from as Int
+        rowPosition.to
+        rowPosition.from
 
         isCurrentlyDragging = false
 
@@ -85,14 +89,14 @@ class MainViewModel: ViewModel() {
     }
 
     fun addPersons(
-        item: PersonUIItem,
+        item: DragItem,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition
+        columnPosition: ColumnPosition<COLUMN>
     ) {
-        columnPosition.to as COLUMN
-        columnPosition.from as COLUMN
+        columnPosition.to
+        columnPosition.from
 
-        val newItems = mutableListOf<PersonUIItem>()
+        val newItems = mutableListOf<DragItem>()
 
         taskItems.forEachIndexed { index, personUIItem ->
             if (
