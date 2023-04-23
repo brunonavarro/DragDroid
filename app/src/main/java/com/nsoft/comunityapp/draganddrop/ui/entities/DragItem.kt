@@ -45,7 +45,7 @@ data class DragItem(
     var isDraggable: Boolean = false,
     override var column: COLUMN = COLUMN.TO_DO
 ) : ItemUI<DragItem> by PersonUIItemIMPl(column, backgroundColor), ItemPosition<COLUMN>(
-    rowPosition = RowPosition(),
+    rowPosition = RowPosition(from = id),
     columnPosition = ColumnPosition(from = column)
 )
 
