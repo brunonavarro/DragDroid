@@ -19,7 +19,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 
 val LocalDragTargetInfo = localDragTargetInfo<Any, Any>()
 
@@ -147,7 +146,7 @@ inline fun <reified T, reified K> DragTarget(
 inline fun <reified T, reified K> DropItem(
     modifier: Modifier,
     rowIndex: Int,
-    columnIndex: COLUMN,
+    columnIndex: K,
     content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<K>) -> Unit)
 ) {
     val dragInfo = LocalDragTargetInfo.current
