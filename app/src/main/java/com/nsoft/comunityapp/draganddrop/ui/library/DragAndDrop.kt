@@ -263,14 +263,26 @@ open class ItemPosition<K>(
     fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }
 
-data class CustomComposableParams<T, K>(
-    val context: Context,
-    val screenWidth: Int? = null,
-    val screenHeight: Int? = null,
-    val elevation: Int = 0,
-    val modifier: Modifier = Modifier,
-    val idColumn: K? = null,
-    val rowList: List<T>? = null,
-    val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
-    val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null
-)
+interface CustomComposableParams<T, K> {
+    val context: Context
+    val screenWidth: Int?
+    val screenHeight: Int?
+    val elevation: Int
+    val modifier: Modifier
+    val idColumn: K?
+    val rowList: List<T>?
+    val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)?
+    val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)?
+}
+
+data class CustomComposableParamsImpl<T, K>(
+    override val context: Context,
+    override val screenWidth: Int? = null,
+    override val screenHeight: Int? = null,
+    override val elevation: Int = 0,
+    override val modifier: Modifier = Modifier,
+    override val idColumn: K? = null,
+    override val rowList: List<T>? = null,
+    override val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
+    override val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null
+) : CustomComposableParams<T, K>

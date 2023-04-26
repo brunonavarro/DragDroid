@@ -17,10 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
-import com.nsoft.comunityapp.draganddrop.ui.library.CustomComposableParams
-import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
-import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.*
 
 
 /**
@@ -75,7 +72,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                 }
                 if (isInBound) {
                     customComposable(
-                        CustomComposableParams<T, K>(
+                        CustomComposableParamsImpl<T, K>(
                             context = context,
                             idColumn = column as K, elevation = 6, screenWidth = screenWidth,
                             screenHeight = screenHeight, rowList = rowList,
@@ -93,7 +90,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                     )
                 } else {
                     customComposable(
-                        CustomComposableParams<T, K>(
+                        CustomComposableParamsImpl<T, K>(
                             context = context,
                             idColumn = column as K, elevation = 6, screenWidth = screenWidth,
                             modifier = Modifier
