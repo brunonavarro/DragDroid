@@ -31,9 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
-import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
-import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
-import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.*
 
 /**
  * Clase CustomUIDragItem
@@ -41,14 +39,14 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun ColumnCard(
-    params: Params.CustomParams
+inline fun <reified T : CustomerPerson, reified K> ColumnCard(
+    params: CustomComposableParams<T, K>,
 ) {
     Column {
 
         // Encabezado de estado
         Text(
-            text = params.idColumn?.name ?: "",
+            text = params.getname(),
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
             color = Color.Gray,
@@ -57,68 +55,67 @@ fun ColumnCard(
                 .width(Dp((params.screenWidth ?: 0) / 2.1f))
                 .padding(vertical = 8.dp)
         )
-
         Divider()
 
-        params.onStart?.let {
-            params.onEnd?.let {
-                LazyColumn(
-                    modifier = params.modifier
-                ) {
-                    items(params.rowList ?: listOf(), key = {
-                        it.rowPosition.from ?: 0
-                    }) { personUIItem ->
-                        // Elemento de tarjeta de tarea
-                        val vibrator =
-                            params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                        personUIItem.columnPosition.from = params.idColumn
-                        DragTarget<DragItem, COLUMN>(
-                            rowIndex = personUIItem.rowPosition.from ?: 0,
-                            columnIndex = personUIItem.columnPosition.from as COLUMN,
-                            dataToDrop = personUIItem,
-                            vibrator = vibrator,
-                            onStart = params.onStart,
-                            onEnd = params.onEnd
-                        ) { isDrag, data ->
-                            if (isDrag && data as DragItem == personUIItem) {
-                                Log.e("ABC", "isDrag $isDrag - data $data")
-                                Box(
-                                    Modifier
-                                        .background(Color.White)
-                                        .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                                        .height(Dp((params.screenHeight ?: 0) / 6f))
-                                        .padding(24.dp)
-                                        .shadow(0.dp, RoundedCornerShape(15.dp))
+
+
+        LazyColumn(
+            modifier = params.modifier
+        ) {
+            items(params.rowList ?: listOf(), key = {
+                params.rowposition(it)
+            }) { personUIItem ->
+                // Elemento de tarjeta de tarea
+                val vibrator =
+                    params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                params.getactulizarcolumn(personUIItem, params.idColumn)
+                DragTarget<T, K>(
+                    rowIndex = params.rowposition(personUIItem),
+                    columnIndex = params.getcolumn(personUIItem),
+                    dataToDrop = personUIItem,
+                    vibrator = vibrator,
+                    onStart = params.onStart,
+                    onEnd = params.onEnd
+                ) { isDrag, data ->
+                    if (isDrag && data as DragItem == personUIItem) {
+                        Log.e("ABC", "isDrag $isDrag - data $data")
+                        Box(
+                            Modifier
+                                .background(Color.White)
+                                .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                                .height(Dp((params.screenHeight ?: 0) / 6f))
+                                .padding(24.dp)
+                                .shadow(0.dp, RoundedCornerShape(15.dp))
+                        )
+                    } else {
+                        Card(
+                            backgroundColor = personUIItem.backgroundColor,
+                            modifier = Modifier
+                                .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                                .height(Dp((params.screenHeight ?: 0) / 6f))
+                                .padding(8.dp)
+                                .shadow(params.elevation.dp, RoundedCornerShape(15.dp))
+                        ) {
+                            Column(Modifier.padding(16.dp)) {
+                                Text(
+                                    text = params.namerow(personUIItem),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(bottom = 8.dp)
                                 )
-                            } else {
-                                Card(
-                                    backgroundColor = personUIItem.backgroundColor,
-                                    modifier = Modifier
-                                        .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                                        .height(Dp((params.screenHeight ?: 0) / 6f))
-                                        .padding(8.dp)
-                                        .shadow(params.elevation.dp, RoundedCornerShape(15.dp))
-                                ) {
-                                    Column(Modifier.padding(16.dp)) {
-                                        Text(
-                                            text = personUIItem.name,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 18.sp,
-                                            color = Color.White,
-                                            modifier = Modifier.padding(bottom = 8.dp)
-                                        )
-                                        Divider()
-                                        Spacer(params.modifier)
-                                        Text(
-                                            text = personUIItem.column.name,
-                                            color = Color.White,
-                                            modifier = Modifier.align(Alignment.End)
-                                        )
-                                    }
-                                }
+                                Divider()
+                                Spacer(params.modifier)
+                                Text(
+                                    text = params.namecolum(personUIItem),
+                                    color = Color.White,
+                                    modifier = Modifier.align(Alignment.End)
+                                )
                             }
                         }
                     }
+
+
                 }
             }
         }
@@ -126,15 +123,44 @@ fun ColumnCard(
 }
 
 sealed class Params {
-    data class CustomParams(
-        val context: Context,
-        val screenWidth: Int? = null,
-        val screenHeight: Int? = null,
-        val elevation: Int = 0,
-        val modifier: Modifier = Modifier,
-        val idColumn: COLUMN? = null,
-        val rowList: List<DragItem>? = null,
-        val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null,
-        val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)? = null
-    )
+    class CustomParams(
+        override val context: Context,
+        override val screenWidth: Int? = null,
+        override val screenHeight: Int? = null,
+        override val elevation: Int = 0,
+        override val modifier: Modifier = Modifier,
+        override val idColumn: COLUMN? = null,
+        override val rowList: List<DragItem>? = null,
+        override val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit),
+        override val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)
+    ) : CustomComposableParams<DragItem, COLUMN> {
+        override fun getname(): String {
+            return idColumn?.name ?: ""
+        }
+
+        override fun rowposition(it: DragItem): Int {
+            return it.rowPosition.from ?: 0
+        }
+
+        override fun namerow(it: DragItem): String {
+            return it.name
+        }
+
+        override fun namecolum(it: DragItem): String {
+            return it.column.name
+        }
+
+        override fun getbackgroundColor(it: DragItem): Color {
+            return Color.Blue
+        }
+
+        override fun getactulizarcolumn(it: DragItem, id: COLUMN?) {
+            it.columnPosition.from = id
+        }
+
+        override fun getcolumn(it: DragItem): COLUMN {
+            return it.columnPosition.from as COLUMN
+        }
+
+    }
 }

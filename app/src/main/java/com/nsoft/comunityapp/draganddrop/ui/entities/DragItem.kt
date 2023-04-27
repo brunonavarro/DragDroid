@@ -2,6 +2,7 @@ package com.nsoft.comunityapp.draganddrop.ui.entities
 
 import androidx.compose.ui.graphics.Color
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.CustomerPerson
 import com.nsoft.comunityapp.draganddrop.ui.library.ItemPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
 
@@ -45,7 +46,7 @@ data class DragItem(
     override var backgroundColor: Color,
     var isDraggable: Boolean = false,
     override var column: COLUMN = COLUMN.TO_DO
-) : ItemUI<DragItem> by PersonUIItemIMPl(column, backgroundColor), ItemPosition<COLUMN>(
+) : CustomerPerson, ItemUI<DragItem> by PersonUIItemIMPl(column, backgroundColor), ItemPosition<COLUMN>(
     rowPosition = RowPosition(from = id),
     columnPosition = ColumnPosition(from = column)
 )
