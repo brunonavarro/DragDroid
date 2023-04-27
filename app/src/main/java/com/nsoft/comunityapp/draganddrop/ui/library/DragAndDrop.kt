@@ -20,7 +20,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 
 val LocalDragTargetInfo = localDragTargetInfo<Any, Any>()
 
@@ -276,19 +275,19 @@ interface CustomComposableParams<T : CustomerPerson, K> {
     val onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
     val onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
 
-    fun getname(): String
+    fun getName(): String
 
-    fun rowposition(it: T): Int
+    fun rowPosition(it: T): Int
 
-    fun namerow(it: T): String
-    fun namecolum(it: T): String
+    fun nameRow(it: T): String
+    fun nameColumn(it: T): String
 
-    fun getbackgroundColor(it: T): Color
+    fun getBackgroundColor(it: T): Color
 
 
-    fun getactulizarcolumn(it:T, id:K?)
+    fun updateColumn(it: T, id: K?)
 
-    fun getcolumn(it:T):K
+    fun getColumn(it: T): K
 
 
 
@@ -305,31 +304,32 @@ data class CustomComposableParamsImpl<T : CustomerPerson, K>(
     override val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit),
     override val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)
 ) : CustomComposableParams<T, K> {
-    override fun getname(): String {
+    override fun getName(): String {
         TODO("Not yet implemented")
     }
 
-    override fun namerow(it: T): String {
+    override fun nameRow(it: T): String {
         TODO("Not yet implemented")
     }
 
-    override fun namecolum(it: T): String {
+    override fun nameColumn(it: T): String {
         TODO("Not yet implemented")
     }
 
 
-    override fun rowposition(it: T): Int {
-        TODO("Not yet implemented")
-    }
-    override fun getbackgroundColor(it: T): Color {
-       return it.backgroundColor
-    }
-
-    override fun getactulizarcolumn(it: T, id: K?) {
+    override fun rowPosition(it: T): Int {
         TODO("Not yet implemented")
     }
 
-    override fun getcolumn(it: T): K {
+    override fun getBackgroundColor(it: T): Color {
+        return it.backgroundColor
+    }
+
+    override fun updateColumn(it: T, id: K?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getColumn(it: T): K {
         TODO("Not yet implemented")
     }
 }

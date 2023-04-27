@@ -46,7 +46,7 @@ inline fun <reified T : CustomerPerson, reified K> ColumnCard(
 
         // Encabezado de estado
         Text(
-            text = params.getname(),
+            text = params.getName(),
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
             color = Color.Gray,
@@ -63,15 +63,15 @@ inline fun <reified T : CustomerPerson, reified K> ColumnCard(
             modifier = params.modifier
         ) {
             items(params.rowList ?: listOf(), key = {
-                params.rowposition(it)
+                params.rowPosition(it)
             }) { personUIItem ->
                 // Elemento de tarjeta de tarea
                 val vibrator =
                     params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                params.getactulizarcolumn(personUIItem, params.idColumn)
+                params.updateColumn(personUIItem, params.idColumn)
                 DragTarget<T, K>(
-                    rowIndex = params.rowposition(personUIItem),
-                    columnIndex = params.getcolumn(personUIItem),
+                    rowIndex = params.rowPosition(personUIItem),
+                    columnIndex = params.getColumn(personUIItem),
                     dataToDrop = personUIItem,
                     vibrator = vibrator,
                     onStart = params.onStart,
@@ -98,7 +98,7 @@ inline fun <reified T : CustomerPerson, reified K> ColumnCard(
                         ) {
                             Column(Modifier.padding(16.dp)) {
                                 Text(
-                                    text = params.namerow(personUIItem),
+                                    text = params.nameRow(personUIItem),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
                                     color = Color.White,
@@ -107,7 +107,7 @@ inline fun <reified T : CustomerPerson, reified K> ColumnCard(
                                 Divider()
                                 Spacer(params.modifier)
                                 Text(
-                                    text = params.namecolum(personUIItem),
+                                    text = params.nameColumn(personUIItem),
                                     color = Color.White,
                                     modifier = Modifier.align(Alignment.End)
                                 )
@@ -134,31 +134,31 @@ sealed class Params {
         override val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit),
         override val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)
     ) : CustomComposableParams<DragItem, COLUMN> {
-        override fun getname(): String {
+        override fun getName(): String {
             return idColumn?.name ?: ""
         }
 
-        override fun rowposition(it: DragItem): Int {
+        override fun rowPosition(it: DragItem): Int {
             return it.rowPosition.from ?: 0
         }
 
-        override fun namerow(it: DragItem): String {
+        override fun nameRow(it: DragItem): String {
             return it.name
         }
 
-        override fun namecolum(it: DragItem): String {
+        override fun nameColumn(it: DragItem): String {
             return it.column.name
         }
 
-        override fun getbackgroundColor(it: DragItem): Color {
+        override fun getBackgroundColor(it: DragItem): Color {
             return Color.Blue
         }
 
-        override fun getactulizarcolumn(it: DragItem, id: COLUMN?) {
+        override fun updateColumn(it: DragItem, id: COLUMN?) {
             it.columnPosition.from = id
         }
 
-        override fun getcolumn(it: DragItem): COLUMN {
+        override fun getColumn(it: DragItem): COLUMN {
             return it.columnPosition.from as COLUMN
         }
 
