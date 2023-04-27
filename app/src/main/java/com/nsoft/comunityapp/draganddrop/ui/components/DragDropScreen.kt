@@ -16,10 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
-import com.nsoft.comunityapp.draganddrop.ui.library.CustomComposableParams
-import com.nsoft.comunityapp.draganddrop.ui.library.DropItem
-import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+import com.nsoft.comunityapp.draganddrop.ui.library.*
 
 
 /**
@@ -28,7 +25,7 @@ import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T, reified K : Any> DragDropScreen(
+inline fun <reified T:CustomerPerson, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
     rowListByGroup: Map<K, List<T>>,
@@ -40,8 +37,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
         columnPosition: ColumnPosition<K>
     ) -> Unit,
     crossinline customComposable: @Composable
-        (
-        params: CustomComposableParams<T, K>
+        (params: CustomComposableParams<T , K>
     ) -> Unit
 ) {
 
@@ -74,7 +70,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                 }
                 if (isInBound) {
                     customComposable(
-                        CustomComposableParams<T, K>(
+                        CustomComposableParamsImpl<T, K>(
                             context = context,
                             idColumn = column, elevation = 6, screenWidth = screenWidth,
                             screenHeight = screenHeight, rowList = rowList,
@@ -92,7 +88,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                     )
                 } else {
                     customComposable(
-                        CustomComposableParams<T, K>(
+                        CustomComposableParamsImpl<T, K>(
                             context = context,
                             idColumn = column, elevation = 6, screenWidth = screenWidth,
                             modifier = Modifier
