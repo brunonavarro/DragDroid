@@ -34,6 +34,7 @@ class PersonUIItemIMPl(override var column: COLUMN, override var backgroundColor
         }
         dragItem.columnPosition.from = columnPosition.from
         dragItem.columnPosition.to = columnPosition.to
+        dragItem.isDraggable = false
     }
 
 }

@@ -53,7 +53,7 @@ inline fun <reified T, reified K> DragTarget(
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    noinline content: @Composable (() -> Unit)
+    noinline content: @Composable ((isDrag: Boolean, data: Any?) -> Unit)
 ) {
     var currentPosition by remember {
         mutableStateOf(Offset.Zero)
@@ -136,7 +136,7 @@ inline fun <reified T, reified K> DragTarget(
                 )
             }
     ) {
-        content()
+        content(currentState.isDragging, currentState.dataToDrop)
     }
 }
 
@@ -174,7 +174,6 @@ inline fun <reified T, reified K> DropItem(
         } else {
             null
         }
-
         content(
             isCurrentDropTarget && dragInfo.columnPosition.canAdd() && data != null,
             data, dragInfo.rowPosition, dragInfo.columnPosition as ColumnPosition<K>
@@ -223,7 +222,7 @@ fun DraggableScreen(
                             targetSize = it.size
                         }
                 ){
-                    state.draggableComposable?.invoke()
+                    state.draggableComposable?.invoke(false, null)
                 }
             }
         }
@@ -234,7 +233,9 @@ class DragTargetInfo<T, K> {
     var isDragging: Boolean by mutableStateOf(false)
     var dragPosition by mutableStateOf(Offset.Zero)
     var dragOffset by mutableStateOf(Offset.Zero)
-    var draggableComposable by mutableStateOf<((@Composable () -> Unit)?)>(null)
+    var draggableComposable by mutableStateOf<((@Composable (isDrag: Boolean, data: Any?) -> Unit)?)>(
+        null
+    )
     var dataToDrop by mutableStateOf<T?>(null)
 
     var columnPosition by mutableStateOf(ColumnPosition<K>())
