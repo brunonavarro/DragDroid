@@ -8,22 +8,20 @@ package com.nsoft.comunityapp.draganddrop.ui
 
 import android.content.Context
 import android.os.Build
-import android.os.Vibrator
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
 import com.nsoft.comunityapp.draganddrop.ui.library.CustomComposableParams
+import com.nsoft.comunityapp.draganddrop.ui.library.CustomerPerson
 import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
-import com.nsoft.comunityapp.draganddrop.ui.library.*
 
 /**
  * Clase CustomUIDragItem
@@ -33,8 +31,8 @@ import com.nsoft.comunityapp.draganddrop.ui.library.*
 @Composable
 inline fun <reified T : CustomerPerson, reified K> ColumnCard(
     params: CustomComposableParams<T, K>,
-    header: @Composable (Params.CustomParams) -> Unit,
-    body: @Composable (data: DragItem, Params.CustomParams) -> Unit
+    header: @Composable (CustomComposableParams<T, K>) -> Unit,
+    crossinline body: @Composable (data: T, CustomComposableParams<T, K>) -> Unit
 ) {
     Column {
 
@@ -48,7 +46,7 @@ inline fun <reified T : CustomerPerson, reified K> ColumnCard(
         ) {
             items(params.rowList ?: listOf(),
                 key = {
-                    it.rowPosition.from ?: 0
+                    params.rowPosition(it)
                 }
             ) { personUIItem ->
                 // Elemento de tarjeta de tarea

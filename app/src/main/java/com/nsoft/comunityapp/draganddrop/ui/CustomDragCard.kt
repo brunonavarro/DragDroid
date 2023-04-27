@@ -8,6 +8,8 @@ package com.nsoft.comunityapp.draganddrop.ui
 
 import android.content.Context
 import android.os.Vibrator
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -34,42 +36,52 @@ fun CustomDragCard(
     val vibrator =
         params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     data.columnPosition.from = params.idColumn
-    params.onStart?.let {
-        params.onEnd?.let {
-            DragTarget<DragItem, COLUMN>(
-                rowIndex = data.rowPosition.from ?: 0,
-                columnIndex = data.columnPosition.from as COLUMN,
-                dataToDrop = data,
-                vibrator = vibrator,
-                onStart = params.onStart,
-                onEnd = params.onEnd
+
+    DragTarget<DragItem, COLUMN>(
+        rowIndex = data.rowPosition.from ?: 0,
+        columnIndex = data.columnPosition.from as COLUMN,
+        dataToDrop = data,
+        vibrator = vibrator,
+        onStart = params.onStart,
+        onEnd = params.onEnd
+    ) { isDrag, dataMoved ->
+        if (isDrag && data == dataMoved) {
+            Log.e("ABC", "isDrag $isDrag - data $data")
+            Box(
+                Modifier
+                    .background(Color.White)
+                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                    .height(Dp((params.screenHeight ?: 0) / 6f))
+                    .padding(24.dp)
+                    .shadow(0.dp, RoundedCornerShape(15.dp))
+            )
+        } else {
+            Card(
+                backgroundColor = data.backgroundColor,
+                modifier = Modifier
+                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                    .height(Dp((params.screenHeight ?: 0) / 6f))
+                    .padding(8.dp)
+                    .shadow(params.elevation.dp, RoundedCornerShape(15.dp))
             ) {
-                Card(
-                    backgroundColor = data.backgroundColor,
-                    modifier = Modifier
-                        .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                        .height(Dp((params.screenHeight ?: 0) / 6f))
-                        .padding(8.dp)
-                        .shadow(params.elevation.dp, RoundedCornerShape(15.dp))
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(
-                            text = data.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        Divider()
-                        Spacer(params.modifier)
-                        Text(
-                            text = data.column.name,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.End)
-                        )
-                    }
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        text = data.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Divider()
+                    Spacer(params.modifier)
+                    Text(
+                        text = data.column.name,
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.End)
+                    )
                 }
             }
         }
     }
+
 }
