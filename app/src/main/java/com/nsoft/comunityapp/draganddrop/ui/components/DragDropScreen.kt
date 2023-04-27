@@ -3,7 +3,6 @@ package com.nsoft.comunityapp.draganddrop.ui.components
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +25,7 @@ import com.nsoft.comunityapp.draganddrop.ui.library.*
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T, reified K : Any> DragDropScreen(
+inline fun <reified T:CustomerPerson, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
     rowListByGroup: Map<K, List<T>>,
@@ -38,8 +37,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
         columnPosition: ColumnPosition<K>
     ) -> Unit,
     crossinline customComposable: @Composable
-        (
-        params: CustomComposableParams<T, K>
+        (params: CustomComposableParams<T , K>
     ) -> Unit
 ) {
 
@@ -74,17 +72,17 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                     customComposable(
                         CustomComposableParamsImpl<T, K>(
                             context = context,
-                            idColumn = column as K, elevation = 6, screenWidth = screenWidth,
+                            idColumn = column, elevation = 6, screenWidth = screenWidth,
                             screenHeight = screenHeight, rowList = rowList,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .border(
                                     1.dp,
-                                    color = Color.Black,
+                                    color = Color.Green,
                                     shape = RoundedCornerShape(15.dp)
-                                )
-                                .background(Color.Transparent.copy(alpha = 0.2f)),
+                                ),
+                            //.background(Color.Transparent.copy(alpha = 0.2f)),
                             onStart = onStart, onEnd = onEnd
                         )
                     )
@@ -92,11 +90,11 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                     customComposable(
                         CustomComposableParamsImpl<T, K>(
                             context = context,
-                            idColumn = column as K, elevation = 6, screenWidth = screenWidth,
+                            idColumn = column, elevation = 6, screenWidth = screenWidth,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
-                                .background(Color.LightGray.copy(alpha = 0.2f)),
+                                .padding(8.dp),
+                            //.background(Color.LightGray.copy(alpha = 0.2f)),
                             screenHeight = screenHeight, rowList = rowList,
                             onStart = onStart, onEnd = onEnd
                         )

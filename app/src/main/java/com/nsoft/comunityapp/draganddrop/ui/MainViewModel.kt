@@ -1,10 +1,8 @@
 package com.nsoft.comunityapp.draganddrop.ui
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
@@ -25,7 +23,7 @@ class MainViewModel: ViewModel() {
     var draggedTask = mutableStateOf<DragItem?>(null)
         private set
 
-    var isCurrentlyDragging: Boolean by mutableStateOf(false)
+    var isCurrentlyDragging = mutableStateOf(false)
         private set
 
 
@@ -64,7 +62,11 @@ class MainViewModel: ViewModel() {
         rowPosition.to
         rowPosition.from
 
-        isCurrentlyDragging = true
+        taskItems.firstOrNull { it == item }?.apply {
+            isDraggable = true
+        }
+
+        isCurrentlyDragging.value = true
 
         draggedTask.value = item
 
@@ -81,7 +83,11 @@ class MainViewModel: ViewModel() {
         rowPosition.to
         rowPosition.from
 
-        isCurrentlyDragging = false
+        taskItems.firstOrNull { it == item }?.apply {
+            isDraggable = false
+        }
+
+        isCurrentlyDragging.value = false
 
         draggedTask.value = null
 

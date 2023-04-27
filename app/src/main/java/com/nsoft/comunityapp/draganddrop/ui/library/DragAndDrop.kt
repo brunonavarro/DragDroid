@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
@@ -37,23 +38,15 @@ inline fun <reified T, reified K> localDragTargetInfo(): ProvidableCompositionLo
 /**Movimiento de componente**/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T, reified K> DragTarget(
+inline fun <reified T : CustomerPerson, reified K> DragTarget(
     modifier: Modifier = Modifier,
     rowIndex: Int,
     columnIndex: K,
     dataToDrop: T,
     vibrator: Vibrator?,
-    crossinline onStart: (
-        item: T,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition<K>
-    ) -> Unit,
-    crossinline onEnd: (
-        item: T,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition<K>
-    ) -> Unit,
-    noinline content: @Composable (() -> Unit)
+    crossinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    crossinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    noinline content: @Composable ((isDrag: Boolean, data: Any?) -> Unit)
 ) {
     var currentPosition by remember {
         mutableStateOf(Offset.Zero)
@@ -136,7 +129,7 @@ inline fun <reified T, reified K> DragTarget(
                 )
             }
     ) {
-        content()
+        content(currentState.isDragging, currentState.dataToDrop)
     }
 }
 
@@ -174,7 +167,6 @@ inline fun <reified T, reified K> DropItem(
         } else {
             null
         }
-
         content(
             isCurrentDropTarget && dragInfo.columnPosition.canAdd() && data != null,
             data, dragInfo.rowPosition, dragInfo.columnPosition as ColumnPosition<K>
@@ -190,7 +182,7 @@ inline fun <reified T, reified K> DropItem(
 fun DraggableScreen(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
-){
+) {
     val state = remember {
         /** Unicamente funciona con Any */
         DragTargetInfo<Any, Any>()
@@ -201,9 +193,9 @@ fun DraggableScreen(
     ) {
         Box(
             modifier = modifier.fillMaxSize()
-        ){
+        ) {
             content()
-            if (state.isDragging){
+            if (state.isDragging) {
                 var targetSize by remember {
                     mutableStateOf(IntSize.Zero)
                 }
@@ -222,8 +214,8 @@ fun DraggableScreen(
                         .onGloballyPositioned {
                             targetSize = it.size
                         }
-                ){
-                    state.draggableComposable?.invoke()
+                ) {
+                    state.draggableComposable?.invoke(false, null)
                 }
             }
         }
@@ -234,7 +226,9 @@ class DragTargetInfo<T, K> {
     var isDragging: Boolean by mutableStateOf(false)
     var dragPosition by mutableStateOf(Offset.Zero)
     var dragOffset by mutableStateOf(Offset.Zero)
-    var draggableComposable by mutableStateOf<((@Composable () -> Unit)?)>(null)
+    var draggableComposable by mutableStateOf<((@Composable (isDrag: Boolean, data: Any?) -> Unit)?)>(
+        null
+    )
     var dataToDrop by mutableStateOf<T?>(null)
 
     var columnPosition by mutableStateOf(ColumnPosition<K>())
@@ -263,7 +257,13 @@ open class ItemPosition<K>(
     fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
 }
 
-interface CustomComposableParams<T, K> {
+
+interface CustomerPerson {
+    val backgroundColor: Color
+}
+
+
+interface CustomComposableParams<T : CustomerPerson, K> {
     val context: Context
     val screenWidth: Int?
     val screenHeight: Int?
@@ -271,11 +271,29 @@ interface CustomComposableParams<T, K> {
     val modifier: Modifier
     val idColumn: K?
     val rowList: List<T>?
-    val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)?
-    val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)?
+
+    val onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
+    val onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
+
+    fun getName(): String
+
+    fun rowPosition(it: T): Int
+
+    fun nameRow(it: T): String
+    fun nameColumn(it: T): String
+
+    fun getBackgroundColor(it: T): Color
+
+
+    fun updateColumn(it: T, id: K?)
+
+    fun getColumn(it: T): K
+
+
+
 }
 
-data class CustomComposableParamsImpl<T, K>(
+data class CustomComposableParamsImpl<T : CustomerPerson, K>(
     override val context: Context,
     override val screenWidth: Int? = null,
     override val screenHeight: Int? = null,
@@ -283,6 +301,35 @@ data class CustomComposableParamsImpl<T, K>(
     override val modifier: Modifier = Modifier,
     override val idColumn: K? = null,
     override val rowList: List<T>? = null,
-    override val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
-    override val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null
-) : CustomComposableParams<T, K>
+    override val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit),
+    override val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)
+) : CustomComposableParams<T, K> {
+    override fun getName(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun nameRow(it: T): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun nameColumn(it: T): String {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun rowPosition(it: T): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun getBackgroundColor(it: T): Color {
+        return it.backgroundColor
+    }
+
+    override fun updateColumn(it: T, id: K?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getColumn(it: T): K {
+        TODO("Not yet implemented")
+    }
+}
