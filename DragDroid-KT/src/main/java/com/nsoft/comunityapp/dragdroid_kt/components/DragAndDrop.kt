@@ -1,4 +1,4 @@
-package com.nsoft.comunityapp.draganddrop.ui.library
+package com.nsoft.comunityapp.dragdroid_kt.components
 
 import android.content.Context
 import android.os.Build

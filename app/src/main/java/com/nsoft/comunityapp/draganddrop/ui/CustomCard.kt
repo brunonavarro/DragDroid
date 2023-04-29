@@ -29,9 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
+import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
-import com.nsoft.comunityapp.draganddrop.ui.library.*
+import com.nsoft.comunityapp.dragdroid_kt.components.*
 
 /**
  * Clase CustomUIDragItem
@@ -129,11 +129,11 @@ sealed class Params {
         override val screenHeight: Int? = null,
         override val elevation: Int = 0,
         override val modifier: Modifier = Modifier,
-        override val idColumn: COLUMN? = null,
+        override val idColumn: Column? = null,
         override val rowList: List<DragItem>? = null,
-        override val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit),
-        override val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<COLUMN>) -> Unit)
-    ) : CustomComposableParams<DragItem, COLUMN> {
+        override val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<Column>) -> Unit),
+        override val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<Column>) -> Unit)
+    ) : CustomComposableParams<DragItem, Column> {
         override fun getName(): String {
             return idColumn?.name ?: ""
         }
@@ -154,12 +154,12 @@ sealed class Params {
             return Color.Blue
         }
 
-        override fun updateColumn(it: DragItem, id: COLUMN?) {
+        override fun updateColumn(it: DragItem, id: Column?) {
             it.columnPosition.from = id
         }
 
-        override fun getColumn(it: DragItem): COLUMN {
-            return it.columnPosition.from as COLUMN
+        override fun getColumn(it: DragItem): Column {
+            return it.columnPosition.from as Column
         }
 
     }

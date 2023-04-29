@@ -1,4 +1,4 @@
-package com.nsoft.comunityapp.draganddrop.ui.components
+package com.nsoft.comunityapp.dragdroid_kt.components
 
 import android.content.Context
 import android.os.Build
@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.nsoft.comunityapp.draganddrop.ui.library.*
 
 
 /**
@@ -25,7 +24,7 @@ import com.nsoft.comunityapp.draganddrop.ui.library.*
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T:CustomerPerson, reified K : Any> DragDropScreen(
+inline fun <reified T : CustomerPerson, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
     rowListByGroup: Map<K, List<T>>,
