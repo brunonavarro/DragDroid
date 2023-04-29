@@ -12,14 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.nsoft.comunityapp.draganddrop.ui.ColumnCard
-import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
-import com.nsoft.comunityapp.draganddrop.ui.Params
-import com.nsoft.comunityapp.draganddrop.ui.entities.Column
+import com.nsoft.comunityapp.draganddrop.ui.*
+import com.nsoft.comunityapp.draganddrop.ui.components.DragDropScreen
+import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
+import com.nsoft.comunityapp.draganddrop.ui.library.DraggableScreen
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
-import com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
-import com.nsoft.comunityapp.dragdroid_kt.components.DraggableScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -41,7 +39,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White.copy(0.8f))
                 ) {
-                    DragDropScreen<DragItem, Column>(
+                    DragDropScreen<DragItem, COLUMN>(
                         context = applicationContext,
                         columnsItems = mainViewModel.columnsItems,
                         rowListByGroup = rowListByGroup,
@@ -64,18 +62,53 @@ class MainActivity : ComponentActivity() {
                         }
                     ) { params ->
                         ColumnCard(
-                            Params.CustomParams(
+                            params = Params.CustomParams(
                                 context = params.context, screenHeight = params.screenHeight,
                                 screenWidth = params.screenWidth, elevation = params.elevation,
-                                modifier = params.modifier, idColumn = params.idColumn as Column,
+                                modifier = params.modifier, idColumn = params.idColumn as COLUMN,
                                 rowList = params.rowList,
                                 onStart = { item, row, column ->
                                     params.onStart
-                                },
-                                onEnd = { item, row, column ->
-                                    params.onEnd
                                 }
-                            )
+                            ) { item, row, column ->
+                                params.onEnd
+                            },
+                            header = {
+                                CustomHeaderColumn(
+                                    params = Params.CustomParams(
+                                        context = params.context,
+                                        screenHeight = params.screenHeight,
+                                        screenWidth = params.screenWidth,
+                                        elevation = params.elevation,
+                                        modifier = params.modifier,
+                                        idColumn = params.idColumn as COLUMN,
+                                        rowList = params.rowList,
+                                        onStart = { item, row, column ->
+                                            params.onStart
+                                        }
+                                    ) { item, row, column ->
+                                        params.onEnd
+                                    }
+                                )
+                            },
+                            body = { data, bodyParams ->
+                                CustomDragCard(
+                                    data = data, params = Params.CustomParams(
+                                        context = params.context,
+                                        screenHeight = params.screenHeight,
+                                        screenWidth = params.screenWidth,
+                                        elevation = params.elevation,
+                                        modifier = params.modifier,
+                                        idColumn = params.idColumn as COLUMN,
+                                        rowList = params.rowList,
+                                        onStart = { item, row, column ->
+                                            params.onStart
+                                        }
+                                    ) { item, row, column ->
+                                        params.onEnd
+                                    }
+                                )
+                            }
                         )
                     }
                 }
