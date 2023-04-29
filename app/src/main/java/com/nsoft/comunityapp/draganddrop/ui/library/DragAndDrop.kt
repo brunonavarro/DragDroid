@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.IntSize
 
 val LocalDragTargetInfo = localDragTargetInfo<Any, Any>()
 
-inline fun <reified T, reified K> localDragTargetInfo(): ProvidableCompositionLocal<DragTargetInfo<T, K>> {
+inline fun <reified T : Any, reified K> localDragTargetInfo(): ProvidableCompositionLocal<DragTargetInfo<T, K>> {
     return compositionLocalOf { DragTargetInfo() }
 }
 
@@ -46,13 +46,13 @@ inline fun <reified T : CustomerPerson, reified K> DragTarget(
     vibrator: Vibrator?,
     crossinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
     crossinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    noinline content: @Composable ((isDrag: Boolean, data: Any?) -> Unit)
+    noinline content: @Composable ((isDrag: Boolean, data: T?) -> Unit)
 ) {
     var currentPosition by remember {
         mutableStateOf(Offset.Zero)
     }
 
-    val currentState = LocalDragTargetInfo.current
+    val currentState = (LocalDragTargetInfo).current
 
     Box(
         modifier = modifier
@@ -87,7 +87,8 @@ inline fun <reified T : CustomerPerson, reified K> DragTarget(
                         currentState.columnPosition.from = columnIndex
                         currentState.rowPosition.from = rowIndex
 
-                        currentState.draggableComposable = content
+                        currentState.draggableComposable =
+                            content as @Composable() ((Boolean, Any?) -> Unit)?
 
                         onStart(
                             dataToDrop,
@@ -129,7 +130,7 @@ inline fun <reified T : CustomerPerson, reified K> DragTarget(
                 )
             }
     ) {
-        content(currentState.isDragging, currentState.dataToDrop)
+        content(currentState.isDragging, currentState.dataToDrop as T?)
     }
 }
 
@@ -222,11 +223,11 @@ fun DraggableScreen(
     }
 }
 
-class DragTargetInfo<T, K> {
+class DragTargetInfo<T : Any, K> {
     var isDragging: Boolean by mutableStateOf(false)
     var dragPosition by mutableStateOf(Offset.Zero)
     var dragOffset by mutableStateOf(Offset.Zero)
-    var draggableComposable by mutableStateOf<((@Composable (isDrag: Boolean, data: Any?) -> Unit)?)>(
+    var draggableComposable by mutableStateOf<((@Composable (isDrag: Boolean, data: T?) -> Unit)?)>(
         null
     )
     var dataToDrop by mutableStateOf<T?>(null)
