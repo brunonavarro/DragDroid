@@ -24,9 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
+import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
-import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
+import com.nsoft.comunityapp.draganddrop.ui.entities.Params
+import com.nsoft.comunityapp.dragdroid_kt.components.DragTarget
 
 @Composable
 fun CustomDragCard(
@@ -37,9 +38,9 @@ fun CustomDragCard(
         params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     data.columnPosition.from = params.idColumn
 
-    DragTarget<DragItem, COLUMN>(
+    DragTarget<DragItem, Column>(
         rowIndex = data.rowPosition.from ?: 0,
-        columnIndex = data.columnPosition.from as COLUMN,
+        columnIndex = data.columnPosition.from as Column,
         dataToDrop = data,
         vibrator = vibrator,
         onStart = params.onStart,

@@ -46,7 +46,7 @@ inline fun <reified T : CustomerPerson, reified K> DragTarget(
     vibrator: Vibrator?,
     crossinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
     crossinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    noinline content: @Composable ((isDrag: Boolean, data: T?) -> Unit)
+    noinline content: @Composable ((isDrag: Boolean, data: Any?) -> Unit)
 ) {
     var currentPosition by remember {
         mutableStateOf(Offset.Zero)
@@ -88,7 +88,7 @@ inline fun <reified T : CustomerPerson, reified K> DragTarget(
                         currentState.rowPosition.from = rowIndex
 
                         currentState.draggableComposable =
-                            content as @Composable() ((Boolean, Any?) -> Unit)?
+                            content //as @Composable ((Boolean, Any?) -> Unit)?
 
                         onStart(
                             dataToDrop,
