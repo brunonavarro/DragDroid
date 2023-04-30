@@ -1,6 +1,5 @@
 package com.nsoft.comunityapp.dragdroid_kt.components
 
-import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -13,13 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 val LocalDragTargetInfo = localDragTargetInfo<Any, Any>()
 
@@ -38,7 +38,7 @@ inline fun <reified T : Any, reified K> localDragTargetInfo(): ProvidableComposi
 /**Movimiento de componente**/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T : CustomerPerson, reified K> DragTarget(
+inline fun <reified T, reified K> DragTarget(
     modifier: Modifier = Modifier,
     rowIndex: Int,
     columnIndex: K,
@@ -237,100 +237,86 @@ class DragTargetInfo<T : Any, K> {
 
 }
 
-data class ColumnPosition<K>(
-    var from: K? = null,
-    var to: K? = null
-) {
-    fun canAdd() = from != to
-}
-
-data class RowPosition(
-    var from: Int? = 0,
-    var to: Int? = 0
-) {
-    fun canAdd() = from != to
-}
-
-open class ItemPosition<K>(
-    var rowPosition: RowPosition,
-    var columnPosition: ColumnPosition<K>
-) {
-    fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
-}
+//open class ItemPosition<K>(
+//    var rowPosition: RowPosition,
+//    var columnPosition: ColumnPosition<K>
+//) {
+//    fun canAdd() = columnPosition.canAdd() //&& rowPosition.canAdd()
+//}
 
 
-interface CustomerPerson {
-    val backgroundColor: Color
-}
+//interface CustomerPerson {
+//    val backgroundColor: Color
+//}
 
 
-interface CustomComposableParams<T : CustomerPerson, K> {
-    val context: Context
-    val screenWidth: Int?
-    val screenHeight: Int?
-    val elevation: Int
-    val modifier: Modifier
-    val idColumn: K?
-    val rowList: List<T>?
-
-    val onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
-    val onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
-
-    fun getName(): String
-
-    fun rowPosition(it: T): Int
-
-    fun nameRow(it: T): String
-    fun nameColumn(it: T): String
-
-    fun getBackgroundColor(it: T): Color
-
-
-    fun updateColumn(it: T, id: K?)
-
-    fun getColumn(it: T): K
-
-
-
-}
-
-data class CustomComposableParamsImpl<T : CustomerPerson, K>(
-    override val context: Context,
-    override val screenWidth: Int? = null,
-    override val screenHeight: Int? = null,
-    override val elevation: Int = 0,
-    override val modifier: Modifier = Modifier,
-    override val idColumn: K? = null,
-    override val rowList: List<T>? = null,
-    override val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit),
-    override val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)
-) : CustomComposableParams<T, K> {
-    override fun getName(): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun nameRow(it: T): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun nameColumn(it: T): String {
-        TODO("Not yet implemented")
-    }
-
-
-    override fun rowPosition(it: T): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun getBackgroundColor(it: T): Color {
-        return it.backgroundColor
-    }
-
-    override fun updateColumn(it: T, id: K?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getColumn(it: T): K {
-        TODO("Not yet implemented")
-    }
-}
+//interface CustomComposableParams<T : CustomerPerson, K> {
+//    val context: Context
+//    val screenWidth: Int?
+//    val screenHeight: Int?
+//    val elevation: Int
+//    val modifier: Modifier
+//    val idColumn: K?
+//    val rowList: List<T>?
+//
+//    val onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
+//    val onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
+//
+//    fun getName(): String
+//
+//    fun rowPosition(it: T): Int
+//
+//    fun nameRow(it: T): String
+//    fun nameColumn(it: T): String
+//
+//    fun getBackgroundColor(it: T): Color
+//
+//
+//    fun updateColumn(it: T, id: K?)
+//
+//    fun getColumn(it: T): K
+//
+//
+//
+//}
+//
+//data class CustomComposableParamsImpl<T : CustomerPerson, K>(
+//    override val context: Context,
+//    override val screenWidth: Int? = null,
+//    override val screenHeight: Int? = null,
+//    override val elevation: Int = 0,
+//    override val modifier: Modifier = Modifier,
+//    override val idColumn: K? = null,
+//    override val rowList: List<T>? = null,
+//    override val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit),
+//    override val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)
+//) : CustomComposableParams<T, K> {
+//    override fun getName(): String {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun nameRow(it: T): String {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun nameColumn(it: T): String {
+//        TODO("Not yet implemented")
+//    }
+//
+//
+//    override fun rowPosition(it: T): Int {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun getBackgroundColor(it: T): Color {
+//        return it.backgroundColor
+//    }
+//
+//    override fun updateColumn(it: T, id: K?) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun getColumn(it: T): K {
+//        TODO("Not yet implemented")
+//    }
+//}

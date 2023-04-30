@@ -9,9 +9,9 @@ package com.nsoft.comunityapp.draganddrop.ui.entities
 import android.content.Context
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.nsoft.comunityapp.dragdroid_kt.components.ColumnPosition
-import com.nsoft.comunityapp.dragdroid_kt.components.CustomComposableParams
-import com.nsoft.comunityapp.dragdroid_kt.components.RowPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImplementation
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 sealed class Params {
     class CustomParams(
@@ -24,7 +24,9 @@ sealed class Params {
         override val rowList: List<DragItem>? = null,
         override val onStart: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<Column>) -> Unit),
         override val onEnd: ((item: DragItem, rowPosition: RowPosition, columnPosition: ColumnPosition<Column>) -> Unit)
-    ) : CustomComposableParams<DragItem, Column> {
+    ) : ParamsImplementation<DragItem, Column>(
+        context, elevation, idColumn, modifier, screenHeight, screenWidth, rowList, onStart, onEnd
+    ) {
         override fun getName(): String {
             return idColumn?.name ?: ""
         }

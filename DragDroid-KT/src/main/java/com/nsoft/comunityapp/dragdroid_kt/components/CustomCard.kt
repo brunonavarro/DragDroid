@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImpl
 
 /**
  * Clase CustomUIDragItem
@@ -20,10 +21,10 @@ import androidx.compose.runtime.Composable
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T : CustomerPerson, reified K> ColumnCard(
-    params: CustomComposableParams<T, K>,
-    header: @Composable (CustomComposableParams<T, K>) -> Unit,
-    crossinline body: @Composable (data: T, CustomComposableParams<T, K>) -> Unit
+inline fun <reified T, reified K> ColumnCard(
+    params: ParamsImpl<T, K>,
+    header: @Composable (ParamsImpl<T, K>) -> Unit,
+    crossinline body: @Composable (data: T, ParamsImpl<T, K>) -> Unit
 ) {
     Column {
 

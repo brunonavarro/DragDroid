@@ -7,8 +7,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
-import com.nsoft.comunityapp.dragdroid_kt.components.ColumnPosition
-import com.nsoft.comunityapp.dragdroid_kt.components.RowPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 class MainViewModel: ViewModel() {
 

@@ -16,6 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.Params
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImplementation
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 
 /**
@@ -24,7 +28,7 @@ import androidx.compose.ui.unit.dp
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T : CustomerPerson, reified K : Any> DragDropScreen(
+inline fun <reified T, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
     rowListByGroup: Map<K, List<T>>,
@@ -36,7 +40,8 @@ inline fun <reified T : CustomerPerson, reified K : Any> DragDropScreen(
         columnPosition: ColumnPosition<K>
     ) -> Unit,
     crossinline customComposable: @Composable
-        (params: CustomComposableParams<T , K>
+        (
+        params: Params<T, K>
     ) -> Unit
 ) {
 
@@ -69,7 +74,7 @@ inline fun <reified T : CustomerPerson, reified K : Any> DragDropScreen(
                 }
                 if (isInBound) {
                     customComposable(
-                        CustomComposableParamsImpl<T, K>(
+                        params = ParamsImplementation<T, K>(
                             context = context,
                             idColumn = column, elevation = 6, screenWidth = screenWidth,
                             screenHeight = screenHeight, rowList = rowList,
@@ -84,10 +89,25 @@ inline fun <reified T : CustomerPerson, reified K : Any> DragDropScreen(
                             //.background(Color.Transparent.copy(alpha = 0.2f)),
                             onStart = onStart, onEnd = onEnd
                         )
+//                        CustomComposableParamsImpl<T, K>(
+//                            context = context,
+//                            idColumn = column, elevation = 6, screenWidth = screenWidth,
+//                            screenHeight = screenHeight, rowList = rowList,
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(8.dp)
+//                                .border(
+//                                    1.dp,
+//                                    color = Color.Green,
+//                                    shape = RoundedCornerShape(15.dp)
+//                                ),
+//                            //.background(Color.Transparent.copy(alpha = 0.2f)),
+//                            onStart = onStart, onEnd = onEnd
+//                        )
                     )
                 } else {
                     customComposable(
-                        CustomComposableParamsImpl<T, K>(
+                        params = ParamsImplementation<T, K>(
                             context = context,
                             idColumn = column, elevation = 6, screenWidth = screenWidth,
                             modifier = Modifier
@@ -97,6 +117,17 @@ inline fun <reified T : CustomerPerson, reified K : Any> DragDropScreen(
                             screenHeight = screenHeight, rowList = rowList,
                             onStart = onStart, onEnd = onEnd
                         )
+
+//                        ParamsImpl<T, K>(
+//                            context = context,
+//                            idColumn = column, elevation = 6, screenWidth = screenWidth,
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(8.dp),
+//                            //.background(Color.LightGray.copy(alpha = 0.2f)),
+//                            screenHeight = screenHeight, rowList = rowList,
+//                            onStart = onStart, onEnd = onEnd
+//                        )
                     )
                 }
             }
