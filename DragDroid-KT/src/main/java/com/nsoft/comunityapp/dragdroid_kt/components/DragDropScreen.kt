@@ -89,21 +89,6 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                             //.background(Color.Transparent.copy(alpha = 0.2f)),
                             onStart = onStart, onEnd = onEnd
                         )
-//                        CustomComposableParamsImpl<T, K>(
-//                            context = context,
-//                            idColumn = column, elevation = 6, screenWidth = screenWidth,
-//                            screenHeight = screenHeight, rowList = rowList,
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(8.dp)
-//                                .border(
-//                                    1.dp,
-//                                    color = Color.Green,
-//                                    shape = RoundedCornerShape(15.dp)
-//                                ),
-//                            //.background(Color.Transparent.copy(alpha = 0.2f)),
-//                            onStart = onStart, onEnd = onEnd
-//                        )
                     )
                 } else {
                     customComposable(
@@ -118,16 +103,6 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                             onStart = onStart, onEnd = onEnd
                         )
 
-//                        ParamsImpl<T, K>(
-//                            context = context,
-//                            idColumn = column, elevation = 6, screenWidth = screenWidth,
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(8.dp),
-//                            //.background(Color.LightGray.copy(alpha = 0.2f)),
-//                            screenHeight = screenHeight, rowList = rowList,
-//                            onStart = onStart, onEnd = onEnd
-//                        )
                     )
                 }
             }
