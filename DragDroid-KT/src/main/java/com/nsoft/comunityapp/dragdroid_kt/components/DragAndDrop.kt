@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.nsoft.comunityapp.dragdroid_kt.entities.DragTargetInfo
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
@@ -221,18 +222,4 @@ fun DraggableScreen(
             }
         }
     }
-}
-
-class DragTargetInfo<T : Any, K> {
-    var isDragging: Boolean by mutableStateOf(false)
-    var dragPosition by mutableStateOf(Offset.Zero)
-    var dragOffset by mutableStateOf(Offset.Zero)
-    var draggableComposable by mutableStateOf<((@Composable (isDrag: Boolean, data: T?) -> Unit)?)>(
-        null
-    )
-    var dataToDrop by mutableStateOf<T?>(null)
-
-    var columnPosition by mutableStateOf(ColumnPosition<K>())
-    var rowPosition by mutableStateOf(RowPosition())
-
 }
