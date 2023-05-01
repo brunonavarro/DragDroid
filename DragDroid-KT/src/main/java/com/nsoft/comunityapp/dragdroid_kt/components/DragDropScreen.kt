@@ -12,15 +12,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.nsoft.comunityapp.dragdroid_kt.entities.BoardParam
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.Params
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImplementation
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
+val LocalBoardParamInfo = localBoardParamInfo<Any, Any>()
+
+inline fun <reified T, reified K : Any> localBoardParamInfo(): ProvidableCompositionLocal<BoardParam<T, K>> {
+    return compositionLocalOf { BoardParam() }
+}
 
 /**
  * Clase exclusiva de Libreria
