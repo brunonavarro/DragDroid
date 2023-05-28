@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImpl
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
 /**
  * Clase CustomUIDragItem
@@ -22,27 +22,24 @@ import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImpl
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
 inline fun <reified T, reified K> ColumnCard(
-    params: ParamsImpl<T, K>,
-    header: @Composable (ParamsImpl<T, K>) -> Unit,
-    crossinline body: @Composable (data: T, ParamsImpl<T, K>) -> Unit
+    params: ColumnParameters.StyleParams<T, K>,
+    header: @Composable () -> Unit,
+    noinline key: (T) -> Any,
+    crossinline body: @Composable (data: T) -> Unit
 ) {
     Column {
 
         // Encabezado de estado
-        header.invoke(params)
+        header.invoke()
 
         Divider()
 
         LazyColumn(
             modifier = params.modifier
         ) {
-            items(params.rowList ?: listOf(),
-                key = {
-                    params.rowPosition(it)
-                }
-            ) { personUIItem ->
+            items(params.rowList ?: listOf(), key = key) { personUIItem ->
                 // Elemento de tarjeta de tarea
-                body.invoke(personUIItem, params)
+                body.invoke(personUIItem)
             }
         }
     }

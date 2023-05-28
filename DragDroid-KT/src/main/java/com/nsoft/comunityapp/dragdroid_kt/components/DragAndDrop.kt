@@ -45,8 +45,8 @@ inline fun <reified T, reified K> DragTarget(
     columnIndex: K,
     dataToDrop: T,
     vibrator: Vibrator?,
-    crossinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    crossinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    crossinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit?,
+    crossinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit?,
     noinline content: @Composable ((isDrag: Boolean, data: Any?) -> Unit)
 ) {
     var currentPosition by remember {
@@ -91,11 +91,13 @@ inline fun <reified T, reified K> DragTarget(
                         currentState.draggableComposable =
                             content //as @Composable ((Boolean, Any?) -> Unit)?
 
+
                         onStart(
                             dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition as ColumnPosition<K>
                         )
+
                     },
                     onDrag = { change, dragAmount ->
                         change.consumeAllChanges()
@@ -115,6 +117,7 @@ inline fun <reified T, reified K> DragTarget(
                             currentState.rowPosition,
                             currentState.columnPosition as ColumnPosition<K>
                         )
+
                     },
                     onDragCancel = {
                         currentState.dragOffset = Offset.Zero
@@ -122,11 +125,13 @@ inline fun <reified T, reified K> DragTarget(
                         currentState.rowPosition.from = rowIndex
                         currentState.isDragging = false
 
+
                         onEnd(
                             dataToDrop,
                             currentState.rowPosition,
                             currentState.columnPosition as ColumnPosition<K>
                         )
+
                     }
                 )
             }

@@ -17,11 +17,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nsoft.comunityapp.draganddrop.ui.entities.Params
+import com.nsoft.comunityapp.draganddrop.ui.entities.Column
+import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
 @Composable
 fun CustomHeaderColumn(
-    params: Params.CustomParams
+    params: ColumnParameters.StyleParams<DragItem, Column>
 ) {
     Text(
         text = params.idColumn?.name ?: "",

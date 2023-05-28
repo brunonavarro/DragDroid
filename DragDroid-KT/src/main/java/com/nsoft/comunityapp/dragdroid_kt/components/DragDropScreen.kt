@@ -19,9 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.nsoft.comunityapp.dragdroid_kt.entities.BoardParam
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.Params
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.ParamsImplementation
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 val LocalBoardParamInfo = localBoardParamInfo<Any, Any>()
@@ -40,17 +39,13 @@ inline fun <reified T, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
     rowListByGroup: Map<K, List<T>>,
-    noinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    noinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    crossinline callBackColumn: (style: ColumnParameters.StyleParams<T, K>) -> Unit,
     crossinline updateBoard: (
         item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    crossinline customComposable: @Composable
-        (
-        params: Params<T, K>
-    ) -> Unit
+    crossinline customComposable: @Composable () -> Unit
 ) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
@@ -81,11 +76,8 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                     }
                 }
                 if (isInBound) {
-                    customComposable(
-                        params = ParamsImplementation<T, K>(
-                            context = context,
-                            idColumn = column, elevation = 6, screenWidth = screenWidth,
-                            screenHeight = screenHeight, rowList = rowList,
+                    callBackColumn.invoke(
+                        ColumnParameters.StyleParams<T, K>(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)
@@ -94,24 +86,32 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                                     color = Color.Green,
                                     shape = RoundedCornerShape(15.dp)
                                 ),
-                            //.background(Color.Transparent.copy(alpha = 0.2f)),
-                            onStart = onStart, onEnd = onEnd
+                            context = context,
+                            idColumn = column,
+                            elevation = 6,
+                            screenWidth = screenWidth,
+                            screenHeight = screenHeight,
+                            rowList = rowList,
+                            BorderColorInBound = Color.Green
                         )
                     )
+                    customComposable()
                 } else {
-                    customComposable(
-                        params = ParamsImplementation<T, K>(
-                            context = context,
-                            idColumn = column, elevation = 6, screenWidth = screenWidth,
+                    callBackColumn.invoke(
+                        ColumnParameters.StyleParams<T, K>(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp),
-                            //.background(Color.LightGray.copy(alpha = 0.2f)),
-                            screenHeight = screenHeight, rowList = rowList,
-                            onStart = onStart, onEnd = onEnd
+                            context = context,
+                            idColumn = column,
+                            elevation = 6,
+                            screenWidth = screenWidth,
+                            screenHeight = screenHeight,
+                            rowList = rowList,
+                            BorderColor = Color.LightGray.copy(alpha = 0.2f)
                         )
-
                     )
+                    customComposable()
                 }
             }
         }
