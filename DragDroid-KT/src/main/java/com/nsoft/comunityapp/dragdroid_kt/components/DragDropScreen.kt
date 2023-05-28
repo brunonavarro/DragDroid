@@ -1,5 +1,6 @@
 package com.nsoft.comunityapp.dragdroid_kt.components
 
+//import com.nsoft.comunityapp.dragdroid_kt.entities.BoardParam
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -12,22 +13,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.nsoft.comunityapp.dragdroid_kt.entities.BoardParam
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
-val LocalBoardParamInfo = localBoardParamInfo<Any, Any>()
+/*val LocalBoardParamInfo = localBoardParamInfo<Any, Any>()*/
 
-inline fun <reified T, reified K : Any> localBoardParamInfo(): ProvidableCompositionLocal<BoardParam<T, K>> {
+/*inline fun <reified T, reified K : Any> localBoardParamInfo(): ProvidableCompositionLocal<BoardParam<T, K>> {
     return compositionLocalOf { BoardParam() }
-}
+}*/
 
 /**
  * Clase exclusiva de Libreria
@@ -59,15 +57,18 @@ inline fun <reified T, reified K : Any> DragDropScreen(
         items(columnList.keys.toList(), key = { it }) { column ->
             val rowList = rowListByGroup[column] ?: emptyList()
             // Crear un LazyColumn para representar las filas de tarjetas de tarea
-            DropItem<T, K>(
+            DropItemMain<T, K>(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
                 rowIndex = rowListByGroup.size,
                 columnIndex = column
-            ) { isInBound, personItem, rowPosition, columnPosition ->
-                LaunchedEffect(key1 = personItem != null, key2 = isInBound) {
-                    if (isInBound && personItem != null) {
+            ) { isInBound, personItem, rowPosition, columnPosition, isDrag ->
+                LaunchedEffect(
+                    key1 = personItem != null,
+                    key2 = isInBound && !isDrag && columnPosition.canAdd()
+                ) {
+                    if (isInBound && !isDrag && columnPosition.canAdd() && personItem != null) {
                         updateBoard(
                             personItem,
                             rowPosition,
@@ -75,7 +76,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                         )
                     }
                 }
-                if (isInBound) {
+                if (isInBound && isDrag) {
                     callBackColumn.invoke(
                         ColumnParameters.StyleParams<T, K>(
                             modifier = Modifier
@@ -83,7 +84,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                                 .padding(8.dp)
                                 .border(
                                     1.dp,
-                                    color = Color.Green,
+                                    color = Color.DarkGray,
                                     shape = RoundedCornerShape(15.dp)
                                 ),
                             context = context,
@@ -92,7 +93,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                             screenWidth = screenWidth,
                             screenHeight = screenHeight,
                             rowList = rowList,
-                            BorderColorInBound = Color.Green
+                            BorderColorInBound = Color.DarkGray
                         )
                     )
                     customComposable()
@@ -108,7 +109,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                             screenWidth = screenWidth,
                             screenHeight = screenHeight,
                             rowList = rowList,
-                            BorderColor = Color.LightGray.copy(alpha = 0.2f)
+                            BorderColor = null
                         )
                     )
                     customComposable()

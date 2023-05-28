@@ -181,6 +181,59 @@ inline fun <reified T, reified K> DropItem(
     }
 }
 
+
+/**ITEM QUE SOPORTA EL SOLTAR ITEM EN SU INTERIOR**/
+@Composable
+inline fun <reified T, reified K> DropItemMain(
+    modifier: Modifier,
+    rowIndex: Int,
+    columnIndex: K,
+    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<K>, isDrag: Boolean) -> Unit)
+) {
+    val dragInfo = LocalDragTargetInfo.current
+    val dragPosition = dragInfo.dragPosition
+    val dragOffset = dragInfo.dragOffset
+
+    var isCurrentDropTarget by remember {
+        mutableStateOf(false)
+    }
+
+    var bound by remember {
+        mutableStateOf(false)
+    }
+
+    Box(
+        modifier = modifier
+            .then(Modifier.onGloballyPositioned {
+                it.boundsInWindow().let { rect ->
+                    if (dragInfo.isDragging) {
+                        bound = rect.contains(dragPosition + dragOffset)
+                    }
+                }
+            })
+    ) {
+
+        val data =
+            if (bound && dragInfo.columnPosition.from != columnIndex && !dragInfo.isDragging) {
+                dragInfo.rowPosition.to = rowIndex
+                dragInfo.columnPosition.to = columnIndex
+                dragInfo.dataToDrop as T?
+            } else {
+                null
+            }
+
+        isCurrentDropTarget = bound && dragInfo.columnPosition.from != columnIndex
+
+        content(
+            isCurrentDropTarget,
+            data,
+            dragInfo.rowPosition,
+            dragInfo.columnPosition as ColumnPosition<K>,
+            dragInfo.isDragging
+        )
+    }
+}
+
 /**DragableScreen no acepta <T,K>
  * para remember en su lugar se deja como Any
  * para acercarlo lo mas posible a generico: only cast to T or K

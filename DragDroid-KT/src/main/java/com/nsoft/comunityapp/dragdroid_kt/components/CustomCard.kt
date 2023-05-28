@@ -25,7 +25,7 @@ inline fun <reified T, reified K> ColumnCard(
     params: ColumnParameters.StyleParams<T, K>,
     header: @Composable () -> Unit,
     noinline key: (T) -> Any,
-    crossinline body: @Composable (data: T) -> Unit
+    crossinline body: @Composable (data: T?) -> Unit
 ) {
     Column {
 
@@ -34,12 +34,16 @@ inline fun <reified T, reified K> ColumnCard(
 
         Divider()
 
-        LazyColumn(
-            modifier = params.modifier
-        ) {
-            items(params.rowList ?: listOf(), key = key) { personUIItem ->
-                // Elemento de tarjeta de tarea
-                body.invoke(personUIItem)
+        if (params.rowList.isNullOrEmpty()) {
+            body.invoke(null)
+        } else {
+            LazyColumn(
+                modifier = params.modifier
+            ) {
+                items(params.rowList, key = key) { personUIItem ->
+                    // Elemento de tarjeta de tarea
+                    body.invoke(personUIItem)
+                }
             }
         }
     }

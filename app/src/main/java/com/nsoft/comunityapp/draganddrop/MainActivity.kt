@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -46,50 +47,189 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White.copy(0.8f))
                 ) {
-                    DragDropScreen(
-                        context = applicationContext,
-                        columnsItems = mainViewModel.columnsItems,
-                        rowListByGroup = rowListByGroup,
-                        updateBoard = { item, row, column ->
-                            mainViewModel.addPersons(item, row, column)
-                        },
-                        callBackColumn = {
-                            columnStyleParams = it
-                        }
-                    ) {
-                        columnStyleParams?.let {
-                            ColumnCard(
-                                params = it,
-                                header = {
-                                    CustomHeaderColumn(
-                                        params = it
-                                    )
-                                },
-                                key = { item ->
-                                    item.rowPosition.from as Any
-                                },
-                                body = { data ->
-                                    CustomDragCard(
-                                        data = data, styleParams = it,
-                                        actionParams = ColumnParameters.ActionParams(
-                                            onStart = { item, row, column ->
-                                                mainViewModel.startDragging(
-                                                    item,
-                                                    rowPosition = row,
-                                                    columnPosition = column
-                                                )
-                                            },
-                                            onEnd = { item, row, column ->
-                                                mainViewModel.endDragging(
-                                                    item,
-                                                    rowPosition = row,
-                                                    columnPosition = column
-                                                )
+
+                    Column() {
+
+                        /*val columnList = mainViewModel.columnsItems.groupBy { it }
+
+                        LazyRow(Modifier.fillMaxWidth()){
+                            items(
+                                columnList.keys.toList(),
+                                key = { it }
+                            ) { column ->
+                                val rowList = rowListByGroup[column] ?: emptyList()
+
+                                DropItemMain<DragItem, Column>(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    rowIndex = rowListByGroup.size,
+                                    columnIndex = column
+                                ) { isInBound, data, rows, column2, isDrag ->
+                                    LaunchedEffect(
+                                        key1 = data != null,
+                                        key2 = isInBound && !isDrag && data?.column != column && column2.canAdd()
+                                    ) {
+                                        if (isInBound && !isDrag && data?.column != column && column2.canAdd() && data != null) {
+                                            mainViewModel.addPersons(
+                                                data,
+                                                rows,
+                                                column2
+                                            )
+                                        }
+                                    }
+
+                                    if (isInBound && isDrag) {
+                                        if (rowList.isNullOrEmpty()){
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(200.dp)
+                                                    .background(Color.Magenta.copy(0.5F))
+                                            )
+
+                                        }else {
+                                            LazyColumn {
+                                                items(
+                                                    rowList ?: listOf(),
+                                                    key = {
+                                                        it.rowPosition.from as Any
+                                                    }
+                                                ) { d ->
+
+                                                    DragTarget<DragItem, Column>(
+                                                        rowIndex = 0,
+                                                        columnIndex = column,
+                                                        dataToDrop = d as DragItem,
+                                                        vibrator = null,
+                                                        onStart = { item, row, column2 ->
+                                                            mainViewModel.startDragging(
+                                                                item,
+                                                                rowPosition = row,
+                                                                columnPosition = column2
+                                                            )
+                                                        },
+                                                        onEnd = { item, row, column2 ->
+                                                            mainViewModel.endDragging(
+                                                                item,
+                                                                rowPosition = row,
+                                                                columnPosition = column2
+                                                            )
+                                                        }
+                                                    ) { isDrag, data ->
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .size(200.dp)
+                                                                .background(Color.Magenta.copy(0.5F))
+                                                        ) {
+                                                            Text(
+                                                                text = "DRAG HERE!! - ${d.name}",
+                                                                modifier = Modifier.align(Alignment.Center)
+                                                            )
+                                                        }
+
+                                                    }
+                                                }
                                             }
-                                        )
-                                    )
+                                        }
+                                    }else{
+                                        if (rowList.isNullOrEmpty()){
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(200.dp)
+                                                    .background(Color.White.copy(0.5F))
+                                            )
+                                        }else {
+                                            LazyColumn {
+                                                items(
+                                                    rowList ?: listOf(),
+                                                    key = {
+                                                        it.rowPosition.from as Any
+                                                    }
+                                                ) { d ->
+                                                    DragTarget<DragItem, Column>(
+                                                        rowIndex = 0,
+                                                        columnIndex = column,
+                                                        dataToDrop = d,
+                                                        vibrator = null,
+                                                        onStart = { item, row, column2 ->
+                                                            mainViewModel.startDragging(
+                                                                item,
+                                                                rowPosition = row,
+                                                                columnPosition = column2
+                                                            )
+                                                        },
+                                                        onEnd = { item, row, column2 ->
+                                                            mainViewModel.endDragging(
+                                                                item,
+                                                                rowPosition = row,
+                                                                columnPosition = column2
+                                                            )
+                                                        }
+                                                    ) { isDrag, data ->
+
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .size(200.dp)
+                                                                .background(Color.Blue.copy(0.5F))
+                                                        ) {
+                                                            Text(
+                                                                text = "DRAG HERE!! - ${d.name}",
+                                                                modifier = Modifier.align(Alignment.Center)
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                            )
+
+                            }
+                        }*/
+
+                        DragDropScreen(
+                            context = applicationContext,
+                            columnsItems = mainViewModel.columnsItems,
+                            rowListByGroup = rowListByGroup,
+                            updateBoard = { item, row, column ->
+                                mainViewModel.addPersons(item, row, column)
+                            },
+                            callBackColumn = {
+                                columnStyleParams = it
+                            }
+                        ) {
+                            columnStyleParams?.let {
+                                ColumnCard(
+                                    params = it,
+                                    header = {
+                                        CustomHeaderColumn(
+                                            params = it
+                                        )
+                                    },
+                                    key = { item ->
+                                        item.rowPosition.from as Any
+                                    },
+                                    body = { data ->
+                                        CustomDragCard(
+                                            data = data, styleParams = it,
+                                            actionParams = ColumnParameters.ActionParams(
+                                                onStart = { item, row, column ->
+                                                    mainViewModel.startDragging(
+                                                        item,
+                                                        rowPosition = row,
+                                                        columnPosition = column
+                                                    )
+                                                },
+                                                onEnd = { item, row, column ->
+                                                    mainViewModel.endDragging(
+                                                        item,
+                                                        rowPosition = row,
+                                                        columnPosition = column
+                                                    )
+                                                }
+                                            )
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
