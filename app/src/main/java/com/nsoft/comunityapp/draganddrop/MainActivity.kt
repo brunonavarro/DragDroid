@@ -35,7 +35,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val rowListByGroup = mainViewModel.taskItems.groupBy { it.column }
+            val rowListByGroup =
+                mainViewModel.taskItems.filter { !it.isDraggable }.groupBy { it.column }
 
             var columnStyleParams by remember {
                 mutableStateOf<ColumnParameters.StyleParams<DragItem, Column>?>(null)
