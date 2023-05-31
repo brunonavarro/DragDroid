@@ -1,5 +1,6 @@
-package com.nsoft.comunityapp.draganddrop.ui.components
+package com.nsoft.comunityapp.dragdroid_kt.components
 
+//import com.nsoft.comunityapp.dragdroid_kt.entities.BoardParam
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,8 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.nsoft.comunityapp.draganddrop.ui.library.*
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
+/*val LocalBoardParamInfo = localBoardParamInfo<Any, Any>()*/
+
+/*inline fun <reified T, reified K : Any> localBoardParamInfo(): ProvidableCompositionLocal<BoardParam<T, K>> {
+    return compositionLocalOf { BoardParam() }
+}*/
 
 /**
  * Clase exclusiva de Libreria
@@ -25,20 +33,17 @@ import com.nsoft.comunityapp.draganddrop.ui.library.*
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T:CustomerPerson, reified K : Any> DragDropScreen(
+inline fun <reified T, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
     rowListByGroup: Map<K, List<T>>,
-    noinline onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-    noinline onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
+    crossinline callBackColumn: (style: ColumnParameters.StyleParams<T, K>) -> Unit,
     crossinline updateBoard: (
         item: T,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<K>
     ) -> Unit,
-    crossinline customComposable: @Composable
-        (params: CustomComposableParams<T , K>
-    ) -> Unit
+    crossinline customComposable: @Composable () -> Unit
 ) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
@@ -52,15 +57,18 @@ inline fun <reified T:CustomerPerson, reified K : Any> DragDropScreen(
         items(columnList.keys.toList(), key = { it }) { column ->
             val rowList = rowListByGroup[column] ?: emptyList()
             // Crear un LazyColumn para representar las filas de tarjetas de tarea
-            DropItem<T, K>(
+            DropItemMain<T, K>(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
                 rowIndex = rowListByGroup.size,
                 columnIndex = column
-            ) { isInBound, personItem, rowPosition, columnPosition ->
-                LaunchedEffect(key1 = personItem != null, key2 = isInBound) {
-                    if (isInBound && personItem != null) {
+            ) { isInBound, personItem, rowPosition, columnPosition, isDrag ->
+                LaunchedEffect(
+                    key1 = personItem != null,
+                    key2 = isInBound && !isDrag && columnPosition.canAdd()
+                ) {
+                    if (isInBound && !isDrag && columnPosition.canAdd() && personItem != null) {
                         updateBoard(
                             personItem,
                             rowPosition,
@@ -68,37 +76,43 @@ inline fun <reified T:CustomerPerson, reified K : Any> DragDropScreen(
                         )
                     }
                 }
-                if (isInBound) {
-                    customComposable(
-                        CustomComposableParamsImpl<T, K>(
-                            context = context,
-                            idColumn = column, elevation = 6, screenWidth = screenWidth,
-                            screenHeight = screenHeight, rowList = rowList,
+                if (isInBound && isDrag) {
+                    callBackColumn.invoke(
+                        ColumnParameters.StyleParams<T, K>(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .border(
                                     1.dp,
-                                    color = Color.Green,
+                                    color = Color.DarkGray,
                                     shape = RoundedCornerShape(15.dp)
                                 ),
-                            //.background(Color.Transparent.copy(alpha = 0.2f)),
-                            onStart = onStart, onEnd = onEnd
+                            context = context,
+                            idColumn = column,
+                            elevation = 6,
+                            screenWidth = screenWidth,
+                            screenHeight = screenHeight,
+                            rowList = rowList,
+                            BorderColorInBound = Color.DarkGray
                         )
                     )
+                    customComposable()
                 } else {
-                    customComposable(
-                        CustomComposableParamsImpl<T, K>(
-                            context = context,
-                            idColumn = column, elevation = 6, screenWidth = screenWidth,
+                    callBackColumn.invoke(
+                        ColumnParameters.StyleParams<T, K>(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp),
-                            //.background(Color.LightGray.copy(alpha = 0.2f)),
-                            screenHeight = screenHeight, rowList = rowList,
-                            onStart = onStart, onEnd = onEnd
+                            context = context,
+                            idColumn = column,
+                            elevation = 6,
+                            screenWidth = screenWidth,
+                            screenHeight = screenHeight,
+                            rowList = rowList,
+                            BorderColor = null
                         )
                     )
+                    customComposable()
                 }
             }
         }

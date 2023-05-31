@@ -24,64 +24,92 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
+import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
-import com.nsoft.comunityapp.draganddrop.ui.library.DragTarget
+import com.nsoft.comunityapp.dragdroid_kt.components.DragTarget
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
 @Composable
 fun CustomDragCard(
-    data: DragItem,
-    params: Params.CustomParams
+    data: DragItem?,
+    styleParams: ColumnParameters.StyleParams<DragItem, Column>,
+    actionParams: ColumnParameters.ActionParams<DragItem, Column>
 ) {
     val vibrator =
-        params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    data.columnPosition.from = params.idColumn
+        styleParams.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-    DragTarget<DragItem, COLUMN>(
-        rowIndex = data.rowPosition.from ?: 0,
-        columnIndex = data.columnPosition.from as COLUMN,
-        dataToDrop = data,
-        vibrator = vibrator,
-        onStart = params.onStart,
-        onEnd = params.onEnd
-    ) { isDrag, dataMoved ->
-        if (isDrag && data == dataMoved) {
-            Log.e("ABC", "isDrag $isDrag - data $data")
-            Box(
-                Modifier
-                    .background(Color.White)
-                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                    .height(Dp((params.screenHeight ?: 0) / 6f))
-                    .padding(24.dp)
-                    .shadow(0.dp, RoundedCornerShape(15.dp))
-            )
-        } else {
-            Card(
-                backgroundColor = data.backgroundColor,
-                modifier = Modifier
-                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                    .height(Dp((params.screenHeight ?: 0) / 6f))
-                    .padding(8.dp)
-                    .shadow(params.elevation.dp, RoundedCornerShape(15.dp))
-            ) {
-                Column(Modifier.padding(16.dp)) {
-                    Text(
-                        text = data.name,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color.White,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Divider()
-                    Spacer(params.modifier)
-                    Text(
-                        text = data.column.name,
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.End)
-                    )
+    actionParams.onStart.let { onStart ->
+        actionParams.onEnd.let { onEnd ->
+            if (data == null) {
+                CustomEmptyDragCard(styleParams)
+            } else {
+                data.columnPosition.from = styleParams.idColumn
+                DragTarget<DragItem, Column>(
+                    rowIndex = data.rowPosition.from ?: 0,
+                    columnIndex = data.columnPosition.from as Column,
+                    dataToDrop = data,
+                    vibrator = vibrator,
+                    onStart = onStart,
+                    onEnd = onEnd
+                ) { isDrag, dataMoved ->
+                    if (isDrag && data == dataMoved) {
+                        Log.e("ABC", "isDrag $isDrag - data $data")
+                        Box(
+                            Modifier
+                                .background(Color.White)
+                                .width(Dp((styleParams.screenWidth ?: 0) / 2.1f))
+                                .height(Dp((styleParams.screenHeight ?: 0) / 6f))
+                                .padding(8.dp)
+                                .shadow(0.dp, RoundedCornerShape(15.dp))
+                        )
+                    } else {
+                        Card(
+                            backgroundColor = data.backgroundColor,
+                            modifier = Modifier
+                                .width(Dp((styleParams.screenWidth ?: 0) / 2.1f))
+                                .height(Dp((styleParams.screenHeight ?: 0) / 6f))
+                                .padding(8.dp)
+                                .shadow(styleParams.elevation.dp, RoundedCornerShape(15.dp))
+                        ) {
+                            Column(Modifier.padding(16.dp)) {
+                                Text(
+                                    text = data.name,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                Divider()
+                                Spacer(
+                                    Modifier
+                                        .height(1.dp)
+                                        .background(Color.White)
+                                        .then(styleParams.modifier)
+                                )
+                                Text(
+                                    text = data.column.name,
+                                    color = Color.White,
+                                    modifier = Modifier.align(Alignment.End)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+}
 
+@Composable
+fun CustomEmptyDragCard(
+    styleParams: ColumnParameters.StyleParams<DragItem, Column>
+) {
+    Box(
+        Modifier
+            .background(Color.White)
+            .width(Dp((styleParams.screenWidth ?: 0) / 2.1f))
+            .height(Dp((styleParams.screenHeight ?: 0) / 6f))
+            .padding(8.dp)
+            .then(styleParams.modifier)
+    )
 }
