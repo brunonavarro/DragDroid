@@ -1,21 +1,19 @@
 package com.nsoft.comunityapp.draganddrop.ui
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import com.nsoft.comunityapp.draganddrop.ui.entities.COLUMN
+import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
-import com.nsoft.comunityapp.draganddrop.ui.library.ColumnPosition
-import com.nsoft.comunityapp.draganddrop.ui.library.RowPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 class MainViewModel: ViewModel() {
 
 
-    var columnsItems = mutableStateListOf<COLUMN>()
+    var columnsItems = mutableStateListOf<Column>()
         private set
 
     var taskItems = mutableStateListOf<DragItem>()
@@ -25,21 +23,21 @@ class MainViewModel: ViewModel() {
     var draggedTask = mutableStateOf<DragItem?>(null)
         private set
 
-    var isCurrentlyDragging: Boolean by mutableStateOf(false)
+    var isCurrentlyDragging = mutableStateOf(false)
         private set
 
 
     init {
-        columnsItems.add(COLUMN.TO_DO)
-        columnsItems.add(COLUMN.IN_PROGRESS)
-        columnsItems.add(COLUMN.DEV_DONE)
+        columnsItems.add(Column.TO_DO)
+        columnsItems.add(Column.IN_PROGRESS)
+        columnsItems.add(Column.DEV_DONE)
 
         taskItems.add(
             DragItem(
                 "Michael",
                 id = 0,
                 backgroundColor = Color.DarkGray,
-//                column = COLUMN.TO_DO
+//                column = _root_ide_package_.com.nsoft.comunityapp.draganddrop.ui.entities.Column.TO_DO
             )
         )
         taskItems.add(
@@ -47,24 +45,28 @@ class MainViewModel: ViewModel() {
                 "Larissa",
                 id = 1,
                 backgroundColor = Color.DarkGray,
-//                column = COLUMN.TO_DO
+//                column = _root_ide_package_.com.nsoft.comunityapp.draganddrop.ui.entities.Column.TO_DO
             )
         )
-        taskItems.add(DragItem("Bruno", 2, Color.DarkGray, column = COLUMN.TO_DO))
+        taskItems.add(DragItem("Bruno", 2, Color.DarkGray, column = Column.TO_DO))
 
     }
 
     fun startDragging(
         item: DragItem,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition<COLUMN>
+        columnPosition: ColumnPosition<Column>
     ) {
         columnPosition.from
 
         rowPosition.to
         rowPosition.from
 
-        isCurrentlyDragging = true
+        taskItems.firstOrNull { it == item }?.apply {
+            isDraggable = true
+        }
+
+        isCurrentlyDragging.value = true
 
         draggedTask.value = item
 
@@ -74,14 +76,18 @@ class MainViewModel: ViewModel() {
     fun endDragging(
         item: DragItem,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition<COLUMN>
+        columnPosition: ColumnPosition<Column>
     ) {
         columnPosition.from
 
         rowPosition.to
         rowPosition.from
 
-        isCurrentlyDragging = false
+        taskItems.firstOrNull { it == item }?.apply {
+            isDraggable = false
+        }
+
+        isCurrentlyDragging.value = false
 
         draggedTask.value = null
 
@@ -91,7 +97,7 @@ class MainViewModel: ViewModel() {
     fun addPersons(
         item: DragItem,
         rowPosition: RowPosition,
-        columnPosition: ColumnPosition<COLUMN>
+        columnPosition: ColumnPosition<Column>
     ) {
         columnPosition.to
         columnPosition.from
@@ -107,13 +113,13 @@ class MainViewModel: ViewModel() {
                 Log.e("ADD : ", "----------------------------------")
                 personUIItem.updateItem(item, index, columnPosition, rowPosition)
                 personUIItem.backgroundColor = when (columnPosition.to) {
-                    COLUMN.TO_DO -> {
+                    Column.TO_DO -> {
                         Color.DarkGray
                     }
-                    COLUMN.IN_PROGRESS -> {
+                    Column.IN_PROGRESS -> {
                         Color.Blue
                     }
-                    COLUMN.DEV_DONE -> {
+                    Column.DEV_DONE -> {
                         Color.Green
                     }
                     else -> {
