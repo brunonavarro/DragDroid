@@ -37,7 +37,6 @@ class MainViewModel: ViewModel() {
                 "Michael",
                 id = 0,
                 backgroundColor = Color.DarkGray,
-//                column = _root_ide_package_.com.nsoft.comunityapp.draganddrop.ui.entities.Column.TO_DO
             )
         )
         taskItems.add(
@@ -45,10 +44,9 @@ class MainViewModel: ViewModel() {
                 "Larissa",
                 id = 1,
                 backgroundColor = Color.DarkGray,
-//                column = _root_ide_package_.com.nsoft.comunityapp.draganddrop.ui.entities.Column.TO_DO
             )
         )
-        taskItems.add(DragItem("Bruno", 2, Color.DarkGray, column = Column.TO_DO))
+        taskItems.add(DragItem("Bruno", 2, Color.DarkGray))
 
     }
 
