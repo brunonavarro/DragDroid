@@ -6,14 +6,25 @@
 
 package com.nsoft.comunityapp.dragdroid_kt.components
 
+import android.content.Context
 import android.os.Build
+import android.os.Vibrator
+import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.ListenersColumn
 
 /**
  * Clase CustomUIDragItem
@@ -23,8 +34,11 @@ import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 @Composable
 inline fun <reified T, reified K> ColumnCard(
     params: ColumnParameters.StyleParams<T, K>,
+    actionParams: ColumnParameters.ActionParams<T, K>,
     header: @Composable () -> Unit,
     noinline key: (T) -> Any,
+    noinline listener: (T) -> ListenersColumn<K>,
+    crossinline emptyItem: @Composable () -> Unit = { EmptyDragCard(params) },
     crossinline body: @Composable ((data: T?) -> Unit)
 ) {
     Column {
@@ -35,18 +49,65 @@ inline fun <reified T, reified K> ColumnCard(
         Divider()
 
         if (params.rowList.isNullOrEmpty()) {
-
             body.invoke(null)
-
         } else {
-            LazyColumn(
-                modifier = params.modifier
-            ) {
-                items(params.rowList, key = key) { personUIItem ->
-                    // Elemento de tarjeta de tarea
-                    body.invoke(personUIItem)
+            if (params.rowList.isNullOrEmpty()) {
+                emptyItem.invoke()
+            } else {
+                val vibrator =
+                    params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                LazyColumn(
+                    modifier = params.modifier
+                ) {
+                    items(items = params.rowList, key = key) { data ->
+                        // Elemento de tarjeta de tarea
+
+                        actionParams.onStart?.let { onStart ->
+                            actionParams.onEnd?.let { onEnd ->
+                                val listeners = listener.invoke(data)
+                                listeners.columnIndex?.let { idColumn ->
+                                    DragTarget<T, K>(
+                                        rowIndex = listeners.rowIndex,
+                                        columnIndex = idColumn,
+                                        dataToDrop = data,
+                                        vibrator = vibrator,
+                                        onStart = onStart,
+                                        onEnd = onEnd
+                                    ) { isDrag, dataMoved ->
+                                        if (isDrag && data == dataMoved) {
+                                            Log.e("ABC", "isDrag $isDrag - data $data")
+                                            Box(
+                                                Modifier
+                                                    .background(Color.White)
+                                                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                                                    .height(Dp((params.screenHeight ?: 0) / 6f))
+                                                    .padding(8.dp)
+                                                    .shadow(0.dp, RoundedCornerShape(15.dp))
+                                            )
+                                        } else {
+                                            body.invoke(data)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+fun <T, K> EmptyDragCard(
+    styleParams: ColumnParameters.StyleParams<T, K>
+) {
+    Box(
+        Modifier
+            .background(Color.White)
+            .width(Dp((styleParams.screenWidth ?: 0) / 2.1f))
+            .height(Dp((styleParams.screenHeight ?: 0) / 6f))
+            .padding(8.dp)
+            .then(styleParams.modifier)
+    )
 }

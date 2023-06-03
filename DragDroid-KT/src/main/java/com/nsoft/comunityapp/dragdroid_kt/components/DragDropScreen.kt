@@ -4,8 +4,10 @@ package com.nsoft.comunityapp.dragdroid_kt.components
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -52,67 +54,73 @@ inline fun <reified T, reified K : Any> DragDropScreen(
     // Agrupar las tareas por estado
     val columnList = columnsItems.groupBy { it }
 
-    // Crear un LazyColumn para representar las columnas de estado
-    LazyRow(Modifier.fillMaxWidth()) {
-        items(columnList.keys.toList(), key = { it }) { column ->
-            val rowList = rowListByGroup[column] ?: emptyList()
-            // Crear un LazyColumn para representar las filas de tarjetas de tarea
-            DropItemMain<T, K>(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                rowIndex = rowListByGroup.size,
-                columnIndex = column
-            ) { isInBound, personItem, rowPosition, columnPosition, isDrag ->
-                LaunchedEffect(
-                    key1 = personItem != null,
-                    key2 = isInBound && !isDrag && columnPosition.canAdd()
-                ) {
-                    if (isInBound && !isDrag && columnPosition.canAdd() && personItem != null) {
-                        updateBoard(
-                            personItem,
-                            rowPosition,
-                            columnPosition
-                        )
+    DraggableScreen(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White.copy(0.8f))
+    ) {
+        // Crear un LazyColumn para representar las columnas de estado
+        LazyRow(Modifier.fillMaxWidth()) {
+            items(columnList.keys.toList(), key = { it }) { column ->
+                val rowList = rowListByGroup[column] ?: emptyList()
+                // Crear un LazyColumn para representar las filas de tarjetas de tarea
+                DropItemMain<T, K>(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    rowIndex = rowListByGroup.size,
+                    columnIndex = column
+                ) { isInBound, personItem, rowPosition, columnPosition, isDrag ->
+                    LaunchedEffect(
+                        key1 = personItem != null,
+                        key2 = isInBound && !isDrag && columnPosition.canAdd()
+                    ) {
+                        if (isInBound && !isDrag && columnPosition.canAdd() && personItem != null) {
+                            updateBoard(
+                                personItem,
+                                rowPosition,
+                                columnPosition
+                            )
+                        }
                     }
-                }
-                if (isInBound && isDrag) {
-                    callBackColumn.invoke(
-                        ColumnParameters.StyleParams<T, K>(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .border(
-                                    1.dp,
-                                    color = Color.DarkGray,
-                                    shape = RoundedCornerShape(15.dp)
-                                ),
-                            context = context,
-                            idColumn = column,
-                            elevation = 6,
-                            screenWidth = screenWidth,
-                            screenHeight = screenHeight,
-                            rowList = rowList,
-                            BorderColorInBound = Color.DarkGray
+                    if (isInBound && isDrag) {
+                        callBackColumn.invoke(
+                            ColumnParameters.StyleParams<T, K>(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .border(
+                                        1.dp,
+                                        color = Color.DarkGray,
+                                        shape = RoundedCornerShape(15.dp)
+                                    ),
+                                context = context,
+                                idColumn = column,
+                                elevation = 6,
+                                screenWidth = screenWidth,
+                                screenHeight = screenHeight,
+                                rowList = rowList,
+                                BorderColorInBound = Color.DarkGray
+                            )
                         )
-                    )
-                    customComposable()
-                } else {
-                    callBackColumn.invoke(
-                        ColumnParameters.StyleParams<T, K>(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            context = context,
-                            idColumn = column,
-                            elevation = 6,
-                            screenWidth = screenWidth,
-                            screenHeight = screenHeight,
-                            rowList = rowList,
-                            BorderColor = null
+                        customComposable()
+                    } else {
+                        callBackColumn.invoke(
+                            ColumnParameters.StyleParams<T, K>(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                context = context,
+                                idColumn = column,
+                                elevation = 6,
+                                screenWidth = screenWidth,
+                                screenHeight = screenHeight,
+                                rowList = rowList,
+                                BorderColor = null
+                            )
                         )
-                    )
-                    customComposable()
+                        customComposable()
+                    }
                 }
             }
         }

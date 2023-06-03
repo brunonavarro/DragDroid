@@ -2,16 +2,13 @@ package com.nsoft.comunityapp.draganddrop
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.nsoft.comunityapp.draganddrop.ui.CustomDragCard
 import com.nsoft.comunityapp.draganddrop.ui.CustomHeaderColumn
@@ -21,7 +18,6 @@ import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
 import com.nsoft.comunityapp.dragdroid_kt.components.ColumnCard
 import com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
-import com.nsoft.comunityapp.dragdroid_kt.components.DraggableScreen
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
 class MainActivity : ComponentActivity() {
@@ -43,58 +39,66 @@ class MainActivity : ComponentActivity() {
             }
             DragAndDropTheme {
                 // A surface container using the 'background' color from the theme
-                DraggableScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(0.8f))
-                ) {
-
-                    Column() {
-                        DragDropScreen(
-                            context = applicationContext,
-                            columnsItems = mainViewModel.columnsItems,
-                            rowListByGroup = rowListByGroup,
-                            updateBoard = { item, row, column ->
-                                mainViewModel.addPersons(item, row, column)
-                            },
-                            callBackColumn = {
-                                columnStyleParams = it
-                            }
-                        ) {
-                            columnStyleParams?.let {
-                                ColumnCard(
-                                    params = it,
-                                    key = { item ->
-                                        item.rowPosition.from as Any
-                                    },
-                                    header = {
-                                        CustomHeaderColumn(
-                                            params = it
+                Column() {
+                    DragDropScreen(
+                        context = applicationContext,
+                        columnsItems = mainViewModel.columnsItems,
+                        rowListByGroup = rowListByGroup,
+                        updateBoard = { item, row, column ->
+                            mainViewModel.addPersons(item, row, column)
+                        },
+                        callBackColumn = {
+                            columnStyleParams = it
+                        }
+                    ) {
+                        columnStyleParams?.let { styleParams ->
+                            ColumnCard(
+                                params = styleParams,
+                                actionParams = ColumnParameters.ActionParams(
+                                    onStart = { item, row, column ->
+                                        mainViewModel.startDragging(
+                                            item,
+                                            rowPosition = row,
+                                            columnPosition = column
                                         )
                                     },
-                                    body = { data ->
-                                        CustomDragCard(
-                                            data = data, styleParams = it,
-                                            actionParams = ColumnParameters.ActionParams(
-                                                onStart = { item, row, column ->
-                                                    mainViewModel.startDragging(
-                                                        item,
-                                                        rowPosition = row,
-                                                        columnPosition = column
-                                                    )
-                                                },
-                                                onEnd = { item, row, column ->
-                                                    mainViewModel.endDragging(
-                                                        item,
-                                                        rowPosition = row,
-                                                        columnPosition = column
-                                                    )
-                                                }
-                                            )
+                                    onEnd = { item, row, column ->
+                                        mainViewModel.endDragging(
+                                            item,
+                                            rowPosition = row,
+                                            columnPosition = column
                                         )
-                                    }
-                                )
-                            }
+                                    },
+                                ),
+                                listener = {
+                                    it.initListenerColumn(
+                                        it.rowPosition.from ?: 0,
+                                        styleParams.idColumn
+                                    )
+                                },
+                                key = { item ->
+                                    item.rowPosition.from as Any
+                                },
+                                header = {
+                                    CustomHeaderColumn(
+                                        params = styleParams
+                                    )
+                                },
+                                body = { data ->
+                                    CustomDragCard(
+                                        data = data, styleParams = styleParams,
+                                        actionParams = ColumnParameters.ActionParams(
+                                            onClick = { item ->
+                                                Toast.makeText(
+                                                    columnStyleParams?.context,
+                                                    "CLICK CARD : ${item.name}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        )
+                                    )
+                                }
+                            )
                         }
                     }
                 }

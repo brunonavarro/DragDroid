@@ -25,7 +25,13 @@ sealed class ColumnParameters<T, K> {
     ) : ColumnParameters<T, K>()
 
     data class ActionParams<T, K>(
-        val onStart: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit,
-        val onEnd: (item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit
+        val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
+        val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
+        val onClick: ((T) -> Unit)? = null
     ) : ColumnParameters<T, K>()
 }
+
+data class ListenersColumn<K>(
+    val rowIndex: Int,
+    val columnIndex: K?
+)

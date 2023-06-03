@@ -12,6 +12,14 @@ abstract class ItemPositionImpl<K>(
     override var columnPosition: ColumnPosition<K>
 ) : ItemPosition<K> {
     abstract fun canAdd(): Boolean
+
+    fun initListenerColumn(rowIndex: Int, columnIndex: K?): ListenersColumn<K> {
+        columnPosition.from = columnIndex
+        return ListenersColumn(
+            rowIndex = rowIndex,
+            columnIndex = columnIndex
+        )
+    }
 }
 
 interface ItemPosition<K> {
