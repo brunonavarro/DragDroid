@@ -13,6 +13,10 @@ abstract class ItemPositionImpl<K>(
 ) : ItemPosition<K> {
     abstract fun canAdd(): Boolean
 
+    fun initRowPosition(): Any {
+        return rowPosition.from as Any
+    }
+
     fun initListenerColumn(rowIndex: Int, columnIndex: K?): ListenersColumn<K> {
         columnPosition.from = columnIndex
         return ListenersColumn(

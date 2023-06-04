@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 ),
                                 key = { item ->
-                                    item.rowPosition.from as Any
+                                    item.initRowPosition()
                                 },
                                 header = {
                                     CustomHeaderColumn(
