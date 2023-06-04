@@ -69,13 +69,13 @@ class MainActivity : ComponentActivity() {
                                             columnPosition = column
                                         )
                                     },
+                                    listener = {
+                                        it.initListenerColumn(
+                                            it.rowPosition.from ?: 0,
+                                            styleParams.idColumn
+                                        )
+                                    }
                                 ),
-                                listener = {
-                                    it.initListenerColumn(
-                                        it.rowPosition.from ?: 0,
-                                        styleParams.idColumn
-                                    )
-                                },
                                 key = { item ->
                                     item.rowPosition.from as Any
                                 },

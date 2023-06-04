@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.ListenersColumn
 
 /**
  * Clase CustomUIDragItem
@@ -37,7 +36,7 @@ inline fun <reified T, reified K> ColumnCard(
     actionParams: ColumnParameters.ActionParams<T, K>,
     header: @Composable () -> Unit,
     noinline key: (T) -> Any,
-    noinline listener: (T) -> ListenersColumn<K>,
+//    noinline listener: (T) -> ListenersColumn<K>,
     crossinline emptyItem: @Composable () -> Unit = { EmptyDragCard(params) },
     crossinline body: @Composable ((data: T?) -> Unit)
 ) {
@@ -64,8 +63,8 @@ inline fun <reified T, reified K> ColumnCard(
 
                         actionParams.onStart?.let { onStart ->
                             actionParams.onEnd?.let { onEnd ->
-                                val listeners = listener.invoke(data)
-                                listeners.columnIndex?.let { idColumn ->
+                                val listeners = actionParams.listener?.invoke(data)
+                                listeners?.columnIndex?.let { idColumn ->
                                     DragTarget<T, K>(
                                         rowIndex = listeners.rowIndex,
                                         columnIndex = idColumn,

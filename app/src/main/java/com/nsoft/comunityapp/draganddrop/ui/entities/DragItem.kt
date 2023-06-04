@@ -56,8 +56,8 @@ data class DragItem(
         columnPosition: ColumnPosition<Column>,
         rowPosition: RowPosition
     ) {
-        id = index
-        rowPosition.from = index
+        //id = index
+//        rowPosition.from = index
         rowPosition.to = rowPosition.to
         columnPosition.to?.let {
             column = it
