@@ -97,9 +97,6 @@ class MainViewModel: ViewModel() {
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<Column>
     ) {
-        columnPosition.to
-        columnPosition.from
-
         val newItems = mutableListOf<DragItem>()
 
         taskItems.forEachIndexed { index, personUIItem ->

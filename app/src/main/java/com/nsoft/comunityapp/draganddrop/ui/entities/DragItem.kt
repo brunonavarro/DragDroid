@@ -1,9 +1,7 @@
 package com.nsoft.comunityapp.draganddrop.ui.entities
 
 import androidx.compose.ui.graphics.Color
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ItemUIImpl
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
 //interface ItemUI<T> {
 //    var column: Column
@@ -43,30 +41,10 @@ data class DragItem(
     var name: String,
     override var id: Int = 0,
     override var backgroundColor: Color,
-    var isDraggable: Boolean = false,
+    override var isDraggable: Boolean = false,
     override var column: Column = Column.TO_DO
 ) : ItemUIImpl<DragItem, Column>(
     id = id,
+    isDraggable = isDraggable,
     column = column, backgroundColor = backgroundColor
-) {
-
-    override fun updateItem(
-        personUIItem: DragItem,
-        index: Int,
-        columnPosition: ColumnPosition<Column>,
-        rowPosition: RowPosition
-    ) {
-        //id = index
-//        rowPosition.from = index
-        rowPosition.to = rowPosition.to
-        columnPosition.to?.let {
-            column = it
-        }
-        columnPosition.from = columnPosition.from
-        columnPosition.to = columnPosition.to
-        isDraggable = false
-    }
-
-    override fun canAdd(): Boolean = columnPosition.canAdd()
-
-}
+)

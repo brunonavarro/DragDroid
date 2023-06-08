@@ -11,7 +11,10 @@ abstract class ItemPositionImpl<K>(
     override var rowPosition: RowPosition,
     override var columnPosition: ColumnPosition<K>
 ) : ItemPosition<K> {
-    abstract fun canAdd(): Boolean
+
+    open fun canAdd(): Boolean {
+        return columnPosition.canAdd()
+    }
 
     fun initRowPosition(): Any {
         return rowPosition.from as Any
