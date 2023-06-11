@@ -81,6 +81,15 @@ inline fun <reified T, reified K> DragTarget(
                             vibrator.vibrate(vibrationEffect1)
                         }
 
+                        Log.e(
+                            "CURRENT COLUMN",
+                            " currentState.currentColumnDrag ${currentState.currentColumnDrag} columnIndex  ${columnIndex}"
+                        )
+                        currentState.currentColumnDrag = columnIndex
+                        Log.e(
+                            "CURRENT COLUMN",
+                            " currentState.currentColumnDrag ${currentState.currentColumnDrag} columnIndex  ${columnIndex}"
+                        )
                         currentState.dataToDrop = dataToDrop
                         currentState.isDragging = true
                         currentState.dragPosition = currentPosition + it
@@ -192,6 +201,9 @@ inline fun <reified T, reified K> DropItemMain(
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
     val dragOffset = dragInfo.dragOffset
+    val column = columnIndex
+
+    dragInfo.currentColumnDrog = columnIndex
 
     var isCurrentDropTarget by remember {
         mutableStateOf(false)
@@ -213,7 +225,16 @@ inline fun <reified T, reified K> DropItemMain(
     ) {
 
         val data =
-            if (bound && dragInfo.columnPosition.from != columnIndex && !dragInfo.isDragging) {
+            if (bound && dragInfo.currentColumnDrag != dragInfo.currentColumnDrog && !dragInfo.isDragging) {
+                Log.e(
+                    "CURRENT COLUMN",
+                    " dragInfo.currentColumnDrag ${dragInfo.currentColumnDrag} dragInfo.currentColumnDrog  ${dragInfo.currentColumnDrog} - columnIndex $columnIndex"
+                )
+                dragInfo.currentColumnDrag = columnIndex
+                Log.e(
+                    "CURRENT COLUMN",
+                    " dragInfo.currentColumnDrag ${dragInfo.currentColumnDrag} dragInfo.currentColumnDrog  ${dragInfo.currentColumnDrog} - columnIndex $columnIndex"
+                )
                 dragInfo.columnPosition.to = columnIndex
                 dragInfo.dataToDrop as T?
             } else {

@@ -9,7 +9,6 @@ package com.nsoft.comunityapp.dragdroid_kt.components
 import android.content.Context
 import android.os.Build
 import android.os.Vibrator
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -72,7 +71,7 @@ inline fun <reified T, reified K> ColumnCard(
                                     onEnd = onEnd
                                 ) { isDrag, dataMoved ->
                                     if (isDrag && data == dataMoved) {
-                                        Log.e("ABC", "isDrag $isDrag - data $data")
+                                        //Log.e("ABC", "isDrag $isDrag - data $data")
                                         Box(
                                             Modifier
                                                 .background(Color.White)

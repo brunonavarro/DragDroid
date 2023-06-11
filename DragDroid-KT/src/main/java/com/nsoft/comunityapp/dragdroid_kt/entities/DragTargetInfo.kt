@@ -18,6 +18,8 @@ class DragTargetInfo<T : Any, K> {
 
     var isDragging: Boolean by mutableStateOf(false)
     var dragPosition by mutableStateOf(Offset.Zero)
+    var currentColumnDrag by mutableStateOf<K?>(null)
+    var currentColumnDrog by mutableStateOf<K?>(null)
     var dragOffset by mutableStateOf(Offset.Zero)
     var draggableComposable by mutableStateOf<((@Composable (isDrag: Boolean, data: T?) -> Unit)?)>(
         null

@@ -103,9 +103,9 @@ class MainViewModel: ViewModel() {
             if (
                 personUIItem == item
             ) {
-                Log.e("ADD personUIItem: ", personUIItem.toString())
-                Log.e("ADD item: ", item.toString())
-                Log.e("ADD : ", "----------------------------------")
+//                Log.e("ADD personUIItem: ", personUIItem.toString())
+//                Log.e("ADD item: ", item.toString())
+//                Log.e("ADD : ", "----------------------------------")
                 personUIItem.updateItem(item, index, columnPosition, rowPosition)
                 personUIItem.backgroundColor = when (columnPosition.to) {
                     Column.TO_DO -> {
@@ -124,8 +124,8 @@ class MainViewModel: ViewModel() {
             }
             newItems.add(index, personUIItem)
         }
-        Log.e("ADD NEW LIST: ", newItems.toString())
-        Log.e("ADD : ", "----------------------------------")
+//        Log.e("ADD NEW LIST: ", newItems.toString())
+//        Log.e("ADD : ", "----------------------------------")
         taskItems.clear()
         taskItems.addAll(newItems)
     }
