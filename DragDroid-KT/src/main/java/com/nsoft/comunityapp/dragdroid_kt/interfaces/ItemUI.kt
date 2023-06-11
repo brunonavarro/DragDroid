@@ -10,12 +10,13 @@ import androidx.compose.ui.graphics.Color
 
 abstract class ItemUIImpl<T, K>(
     override var isDraggable: Boolean,
-    override var id: Any,
+    override val id: Any,
     override var column: K, override var backgroundColor: Color
-) : ItemUI<T, K>, ItemPositionImpl<K>(
+) : ItemUI<T, K>, PositionImpl<K>(
     rowPosition = RowPosition(from = id),
     columnPosition = ColumnPosition(from = column)
 ) {
+
     open fun updateItem(
         columnPosition: ColumnPosition<K>
     ) {
@@ -28,7 +29,7 @@ abstract class ItemUIImpl<T, K>(
 
 sealed interface ItemUI<T, K> {
     var isDraggable: Boolean
-    var id: Any
+    val id: Any
     var column: K
     var backgroundColor: Color
 }

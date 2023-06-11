@@ -16,7 +16,7 @@ import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
-import com.nsoft.comunityapp.dragdroid_kt.components.ColumnCard
+import com.nsoft.comunityapp.dragdroid_kt.components.ColumnDropCard
 import com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
@@ -31,48 +31,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val rowListByGroup =
+            val groupTasks =
                 mainViewModel.taskItems.filter { !it.isDraggable }.groupBy { it.column }
 
-            var columnStyleParams by remember {
+            var stateParams by remember {
                 mutableStateOf<ColumnParameters.StyleParams<DragItem, Column>?>(null)
             }
             DragAndDropTheme {
                 // A surface container using the 'background' color from the theme
                 Column() {
+
                     DragDropScreen(
                         context = applicationContext,
                         columnsItems = mainViewModel.columnsItems,
-                        rowListByGroup = rowListByGroup,
-                        updateBoard = { item, row, column ->
-                            mainViewModel.addPersons(item, row, column)
-                        },
-                        callBackColumn = {
-                            columnStyleParams = it
-                        }
+                        groupTasks = groupTasks,
+                        updateBoard = mainViewModel::updateTasks,
+                        stateListener = { stateParams = it }
                     ) {
-                        columnStyleParams?.let { styleParams ->
-                            ColumnCard(
+                        stateParams?.let { styleParams ->
+                            ColumnDropCard(
                                 params = styleParams,
                                 actionParams = ColumnParameters.ActionParams(
-                                    onStart = { item, row, column ->
-                                        mainViewModel.startDragging(
-                                            item,
-                                            rowPosition = row,
-                                            columnPosition = column
-                                        )
-                                    },
-                                    onEnd = { item, row, column ->
-                                        mainViewModel.endDragging(
-                                            item,
-                                            rowPosition = row,
-                                            columnPosition = column
-                                        )
-                                    }
+                                    onStart = mainViewModel::startDragging,
+                                    onEnd = mainViewModel::endDragging
                                 ),
-                                key = { item ->
-                                    item.getRowPosition()
-                                },
+                                key = { item -> item.getKey() },
                                 header = {
                                     CustomHeaderColumn(
                                         params = styleParams
@@ -80,11 +63,12 @@ class MainActivity : ComponentActivity() {
                                 },
                                 body = { data ->
                                     CustomDragCard(
-                                        data = data, styleParams = styleParams,
+                                        data = data,
+                                        styleParams = styleParams,
                                         actionParams = ColumnParameters.ActionParams(
                                             onClick = { item ->
                                                 Toast.makeText(
-                                                    columnStyleParams?.context,
+                                                    stateParams?.context,
                                                     "CLICK CARD : ${item.name}",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
@@ -95,6 +79,8 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+
+
                 }
             }
         }

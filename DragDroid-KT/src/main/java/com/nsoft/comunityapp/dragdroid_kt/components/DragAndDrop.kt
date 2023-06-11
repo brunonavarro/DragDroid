@@ -29,17 +29,20 @@ inline fun <reified T : Any, reified K> localDragTargetInfo(): ProvidableComposi
 }
 
 /**
- * Clase exclusiva de Libreria
- * * Construye el DropComponent
- * * Construye el DragComponent
- * * Animation Drag and Drop Component
- * * Generic Entity Data Class
+ * [DragItem] composable in charge of containing the items.
+ * @param modifier is the composable modifier to perform the drag event via the [onGloballyPositioned] and [pointerInput] functions.
+ * @param rowIndex is the row identifier.
+ * @param columnIndex is the identifier of the column.
+ * @param dataToDrop is the data to be dragged into [DropItem] and reported to [DraggableScreen] and then the view model will update the list.
+ * @param vibrator is the added parameter that enables the vibration effect when the drag event is started. Applies to Android versions higher than [Build.VERSION_CODES.M].
+ * @param onStart is the function parameter to notify the drag start event with [detectDragGesturesAfterLongPress].
+ * @param onEnd is the function parameter that allows to notify the drag end event with [detectDragGesturesAfterLongPress].
+ * @param content is the composable parameter of the item container to be dragged.
+ * @see com.nsoft.comunityapp.dragdroid_kt.components.ColumnDropCard
  * **/
-
-/**Movimiento de componente**/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-inline fun <reified T, reified K> DragTarget(
+inline fun <reified T, reified K> DragItem(
     modifier: Modifier = Modifier,
     rowIndex: Any,
     columnIndex: K,
@@ -145,9 +148,7 @@ inline fun <reified T, reified K> DragTarget(
 @Composable
 inline fun <reified T, reified K> DropItem(
     modifier: Modifier,
-    rowIndex: Int,
-    columnIndex: K,
-    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<K>) -> Unit)
+    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?) -> Unit)
 ) {
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
@@ -168,15 +169,13 @@ inline fun <reified T, reified K> DropItem(
             })
     ) {
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) {
-            dragInfo.rowPosition.to = rowIndex
-            dragInfo.columnPosition.to = columnIndex
             dragInfo.dataToDrop as T?
         } else {
             null
         }
         content(
-            isCurrentDropTarget && dragInfo.columnPosition.canAdd() && data != null,
-            data, dragInfo.rowPosition, dragInfo.columnPosition as ColumnPosition<K>
+            isCurrentDropTarget,
+            data
         )
     }
 }
@@ -184,7 +183,7 @@ inline fun <reified T, reified K> DropItem(
 
 /**ITEM QUE SOPORTA EL SOLTAR ITEM EN SU INTERIOR**/
 @Composable
-inline fun <reified T, reified K> DropItemMain(
+inline fun <reified T, reified K> DropItem(
     modifier: Modifier,
     columnIndex: K,
     content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<K>, isDrag: Boolean) -> Unit)
@@ -221,7 +220,7 @@ inline fun <reified T, reified K> DropItemMain(
             }
 
         isCurrentDropTarget =
-            bound && dragInfo.columnPosition.from != columnIndex //dragInfo.columnPosition.from != columnIndex
+            bound && dragInfo.columnPosition.from != columnIndex
 
         content(
             isCurrentDropTarget,

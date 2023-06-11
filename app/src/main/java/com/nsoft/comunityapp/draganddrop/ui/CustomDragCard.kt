@@ -51,7 +51,7 @@ fun CustomDragCard(
                     .padding(16.dp))
             ) {
                 Text(
-                    text = data.name + " " + data.rowPosition.from,
+                    text = data.name + " " + data.getKey(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = Color.White,

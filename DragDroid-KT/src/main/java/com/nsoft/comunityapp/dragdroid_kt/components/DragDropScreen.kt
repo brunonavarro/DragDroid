@@ -1,6 +1,5 @@
 package com.nsoft.comunityapp.dragdroid_kt.components
 
-//import com.nsoft.comunityapp.dragdroid_kt.entities.BoardParam
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -23,23 +22,23 @@ import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
 
-/*val LocalBoardParamInfo = localBoardParamInfo<Any, Any>()*/
-
-/*inline fun <reified T, reified K : Any> localBoardParamInfo(): ProvidableCompositionLocal<BoardParam<T, K>> {
-    return compositionLocalOf { BoardParam() }
-}*/
-
 /**
- * Clase exclusiva de Libreria
- * * Construye el Board estilo Jira
+ * [DragDropScreen] composable in charge of containing the rows and columns.
+ * @param context is the application view context.
+ * @param columnsItems is the list of columns.
+ * @param groupTasks is the map of tasks grouped by columns.
+ * @param stateListener is the listener for column state changes (in Bound or not in bound)
+ * @param updateBoard is the parameter in charge of notifying when it is necessary to update a row item due to a column change.
+ * @param customComposable is the column container composable parameter in charge of allowing you to customize some column parameters. (header, body and other layout parameters)
+ * @see com.nsoft.comunityapp.draganddrop.MainActivity
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
 inline fun <reified T, reified K : Any> DragDropScreen(
     context: Context,
     columnsItems: List<K>,
-    rowListByGroup: Map<K, List<T>>,
-    crossinline callBackColumn: (style: ColumnParameters.StyleParams<T, K>) -> Unit,
+    groupTasks: Map<K, List<T>>,
+    crossinline stateListener: (style: ColumnParameters.StyleParams<T, K>) -> Unit,
     crossinline updateBoard: (
         item: T,
         rowPosition: RowPosition,
@@ -59,12 +58,10 @@ inline fun <reified T, reified K : Any> DragDropScreen(
             .fillMaxSize()
             .background(Color.White.copy(0.8f))
     ) {
-        // Crear un LazyColumn para representar las columnas de estado
         LazyRow(Modifier.fillMaxWidth()) {
             items(columnList.keys.toList(), key = { it }) { column ->
-                val rowList = rowListByGroup[column] ?: emptyList()
-                // Crear un LazyColumn para representar las filas de tarjetas de tarea
-                DropItemMain<T, K>(
+                val rowList = groupTasks[column] ?: emptyList()
+                DropItem<T, K>(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
@@ -83,8 +80,8 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                         }
                     }
                     if (isInBound && isDrag) {
-                        callBackColumn.invoke(
-                            ColumnParameters.StyleParams<T, K>(
+                        stateListener.invoke(
+                            ColumnParameters.StyleParams(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)
@@ -99,13 +96,13 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                                 screenWidth = screenWidth,
                                 screenHeight = screenHeight,
                                 rowList = rowList,
-                                BorderColorInBound = Color.DarkGray
+                                borderColorInBound = Color.DarkGray
                             )
                         )
                         customComposable()
                     } else {
-                        callBackColumn.invoke(
-                            ColumnParameters.StyleParams<T, K>(
+                        stateListener.invoke(
+                            ColumnParameters.StyleParams(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp),
@@ -115,7 +112,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                                 screenWidth = screenWidth,
                                 screenHeight = screenHeight,
                                 rowList = rowList,
-                                BorderColor = null
+                                borderColor = null
                             )
                         )
                         customComposable()
