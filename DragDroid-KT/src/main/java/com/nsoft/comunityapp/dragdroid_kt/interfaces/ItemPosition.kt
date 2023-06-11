@@ -24,7 +24,7 @@ abstract class ItemPositionImpl<K>(
         columnPosition.from = columnIndex
         return ListenersColumn(
             rowIndex = rowIndex,
-            columnIndex = columnIndex
+            columnIndex = columnPosition.from //columnIndex
         )
     }
 }
