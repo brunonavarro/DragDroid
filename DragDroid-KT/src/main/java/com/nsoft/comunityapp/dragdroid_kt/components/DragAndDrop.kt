@@ -83,12 +83,12 @@ inline fun <reified T, reified K> DragTarget(
 
                         Log.e(
                             "CURRENT COLUMN",
-                            " currentState.currentColumnDrag ${currentState.currentColumnDrag} columnIndex  ${columnIndex}"
+                            " currentState.currentColumnDrag ${currentState.currentColumnDrag} - ${currentState.currentColumnDrog} columnIndex  ${columnIndex}"
                         )
                         currentState.currentColumnDrag = columnIndex
                         Log.e(
                             "CURRENT COLUMN",
-                            " currentState.currentColumnDrag ${currentState.currentColumnDrag} columnIndex  ${columnIndex}"
+                            " currentState.currentColumnDrag ${currentState.currentColumnDrag} - ${currentState.currentColumnDrog} columnIndex  ${columnIndex}"
                         )
                         currentState.dataToDrop = dataToDrop
                         currentState.isDragging = true
@@ -241,7 +241,8 @@ inline fun <reified T, reified K> DropItemMain(
                 null
             }
 
-        isCurrentDropTarget = bound && dragInfo.columnPosition.from != columnIndex
+        isCurrentDropTarget =
+            bound && dragInfo.currentColumnDrag == dragInfo.currentColumnDrog //dragInfo.columnPosition.from != columnIndex
 
         content(
             isCurrentDropTarget,
