@@ -35,7 +35,6 @@ inline fun <reified T, reified K> ColumnCard(
     actionParams: ColumnParameters.ActionParams<T, K>,
     header: @Composable () -> Unit,
     noinline key: (T) -> Any,
-//    noinline listener: (T) -> ListenersColumn<K>,
     crossinline emptyItem: @Composable () -> Unit = { EmptyDragCard(params) },
     crossinline body: @Composable ((data: T?) -> Unit)
 ) {
@@ -57,13 +56,12 @@ inline fun <reified T, reified K> ColumnCard(
             ) {
                 items(items = params.rowList, key = key) { data ->
                     // Elemento de tarjeta de tarea
-
+                    val index = params.rowList.indexOf(data)
                     actionParams.onStart?.let { onStart ->
                         actionParams.onEnd?.let { onEnd ->
-                            val listeners = actionParams.listener?.invoke(data)
-                            listeners?.columnIndex?.let { idColumn ->
+                            params.idColumn?.let { idColumn ->
                                 DragTarget<T, K>(
-                                    rowIndex = listeners.rowIndex,
+                                    rowIndex = index,//listeners.rowIndex,
                                     columnIndex = idColumn,
                                     dataToDrop = data,
                                     vibrator = vibrator,

@@ -5,7 +5,7 @@ import com.nsoft.comunityapp.dragdroid_kt.interfaces.ItemUIImpl
 
 data class DragItem(
     var name: String,
-    override var id: Int = 0,
+    override var id: Any = 0,
     override var backgroundColor: Color,
     override var isDraggable: Boolean = false,
     override var column: Column = Column.TO_DO

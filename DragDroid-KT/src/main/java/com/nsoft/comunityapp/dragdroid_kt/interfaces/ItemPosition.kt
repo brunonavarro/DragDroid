@@ -12,20 +12,14 @@ abstract class ItemPositionImpl<K>(
     override var columnPosition: ColumnPosition<K>
 ) : ItemPosition<K> {
 
+    open fun getRowPosition() = rowPosition.from ?: 0
+
     open fun canAdd(): Boolean {
         return columnPosition.canAdd()
     }
 
     fun initRowPosition(): Any {
         return rowPosition.from as Any
-    }
-
-    fun initListenerColumn(rowIndex: Int, columnIndex: K?): ListenersColumn<K> {
-        columnPosition.from = columnIndex
-        return ListenersColumn(
-            rowIndex = rowIndex,
-            columnIndex = columnPosition.from //columnIndex
-        )
     }
 }
 
@@ -42,8 +36,8 @@ data class ColumnPosition<K>(
 }
 
 data class RowPosition(
-    var from: Int? = 0,
-    var to: Int? = 0
+    var from: Any? = 0,
+    var to: Any? = 0
 ) {
     fun canAdd() = from != to
 }

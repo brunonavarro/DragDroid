@@ -68,16 +68,10 @@ class MainActivity : ComponentActivity() {
                                             rowPosition = row,
                                             columnPosition = column
                                         )
-                                    },
-                                    listener = {
-                                        it.initListenerColumn(
-                                            it.rowPosition.from ?: 0,
-                                            styleParams.idColumn
-                                        )
                                     }
                                 ),
                                 key = { item ->
-                                    item.initRowPosition()
+                                    item.getRowPosition()
                                 },
                                 header = {
                                     CustomHeaderColumn(

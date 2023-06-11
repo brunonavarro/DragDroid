@@ -35,18 +35,18 @@ class MainViewModel: ViewModel() {
         taskItems.add(
             DragItem(
                 "Michael",
-                id = 0,
+                id = "A1",
                 backgroundColor = Color.DarkGray,
             )
         )
         taskItems.add(
             DragItem(
                 "Larissa",
-                id = 1,
+                id = "B2",
                 backgroundColor = Color.DarkGray,
             )
         )
-        taskItems.add(DragItem("Bruno", 2, Color.DarkGray))
+        taskItems.add(DragItem("Bruno", "D1", Color.DarkGray))
 
     }
 
@@ -106,7 +106,7 @@ class MainViewModel: ViewModel() {
 //                Log.e("ADD personUIItem: ", personUIItem.toString())
 //                Log.e("ADD item: ", item.toString())
 //                Log.e("ADD : ", "----------------------------------")
-                personUIItem.updateItem(item, index, columnPosition, rowPosition)
+                personUIItem.updateItem(columnPosition)
                 personUIItem.backgroundColor = when (columnPosition.to) {
                     Column.TO_DO -> {
                         Color.DarkGray
