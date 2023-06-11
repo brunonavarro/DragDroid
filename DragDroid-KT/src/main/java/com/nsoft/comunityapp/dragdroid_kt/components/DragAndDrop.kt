@@ -225,7 +225,7 @@ inline fun <reified T, reified K> DropItemMain(
     ) {
 
         val data =
-            if (bound && dragInfo.currentColumnDrag != dragInfo.currentColumnDrog && !dragInfo.isDragging) {
+            if (bound && dragInfo.columnPosition.from != columnIndex && !dragInfo.isDragging) {
                 Log.e(
                     "CURRENT COLUMN",
                     " dragInfo.currentColumnDrag ${dragInfo.currentColumnDrag} dragInfo.currentColumnDrog  ${dragInfo.currentColumnDrog} - columnIndex $columnIndex"
@@ -242,7 +242,7 @@ inline fun <reified T, reified K> DropItemMain(
             }
 
         isCurrentDropTarget =
-            bound && dragInfo.currentColumnDrag == dragInfo.currentColumnDrog //dragInfo.columnPosition.from != columnIndex
+            bound && dragInfo.columnPosition.from != columnIndex //dragInfo.columnPosition.from != columnIndex
 
         content(
             isCurrentDropTarget,
