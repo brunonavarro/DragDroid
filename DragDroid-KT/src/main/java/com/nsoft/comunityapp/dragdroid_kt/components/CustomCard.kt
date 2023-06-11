@@ -47,45 +47,42 @@ inline fun <reified T, reified K> ColumnCard(
 
         Divider()
 
-        if (params.rowList.isNullOrEmpty()) {
-            body.invoke(null)
-        } else {
-            if (params.rowList.isNullOrEmpty()) {
-                emptyItem.invoke()
-            } else {
-                val vibrator =
-                    params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                LazyColumn(
-                    modifier = params.modifier
-                ) {
-                    items(items = params.rowList, key = key) { data ->
-                        // Elemento de tarjeta de tarea
 
-                        actionParams.onStart?.let { onStart ->
-                            actionParams.onEnd?.let { onEnd ->
-                                val listeners = actionParams.listener?.invoke(data)
-                                listeners?.columnIndex?.let { idColumn ->
-                                    DragTarget<T, K>(
-                                        rowIndex = listeners.rowIndex,
-                                        columnIndex = idColumn,
-                                        dataToDrop = data,
-                                        vibrator = vibrator,
-                                        onStart = onStart,
-                                        onEnd = onEnd
-                                    ) { isDrag, dataMoved ->
-                                        if (isDrag && data == dataMoved) {
-                                            Log.e("ABC", "isDrag $isDrag - data $data")
-                                            Box(
-                                                Modifier
-                                                    .background(Color.White)
-                                                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                                                    .height(Dp((params.screenHeight ?: 0) / 6f))
-                                                    .padding(8.dp)
-                                                    .shadow(0.dp, RoundedCornerShape(15.dp))
-                                            )
-                                        } else {
-                                            body.invoke(data)
-                                        }
+        if (params.rowList.isNullOrEmpty()) {
+            emptyItem.invoke()
+        } else {
+            val vibrator =
+                params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            LazyColumn(
+                modifier = params.modifier
+            ) {
+                items(items = params.rowList, key = key) { data ->
+                    // Elemento de tarjeta de tarea
+
+                    actionParams.onStart?.let { onStart ->
+                        actionParams.onEnd?.let { onEnd ->
+                            val listeners = actionParams.listener?.invoke(data)
+                            listeners?.columnIndex?.let { idColumn ->
+                                DragTarget<T, K>(
+                                    rowIndex = listeners.rowIndex,
+                                    columnIndex = idColumn,
+                                    dataToDrop = data,
+                                    vibrator = vibrator,
+                                    onStart = onStart,
+                                    onEnd = onEnd
+                                ) { isDrag, dataMoved ->
+                                    if (isDrag && data == dataMoved) {
+                                        Log.e("ABC", "isDrag $isDrag - data $data")
+                                        Box(
+                                            Modifier
+                                                .background(Color.White)
+                                                .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                                                .height(Dp((params.screenHeight ?: 0) / 6f))
+                                                .padding(8.dp)
+                                                .shadow(0.dp, RoundedCornerShape(15.dp))
+                                        )
+                                    } else {
+                                        body.invoke(data)
                                     }
                                 }
                             }
@@ -94,6 +91,7 @@ inline fun <reified T, reified K> ColumnCard(
                 }
             }
         }
+
     }
 }
 
