@@ -186,7 +186,6 @@ inline fun <reified T, reified K> DropItem(
 @Composable
 inline fun <reified T, reified K> DropItemMain(
     modifier: Modifier,
-    rowIndex: Int,
     columnIndex: K,
     content: @Composable() (BoxScope.(isInBound: Boolean, data: T?, rows: RowPosition, column: ColumnPosition<K>, isDrag: Boolean) -> Unit)
 ) {
@@ -215,7 +214,6 @@ inline fun <reified T, reified K> DropItemMain(
 
         val data =
             if (bound && dragInfo.columnPosition.from != columnIndex && !dragInfo.isDragging) {
-                dragInfo.rowPosition.to = rowIndex
                 dragInfo.columnPosition.to = columnIndex
                 dragInfo.dataToDrop as T?
             } else {

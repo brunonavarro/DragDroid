@@ -68,7 +68,6 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
-                    rowIndex = rowListByGroup.size,
                     columnIndex = column
                 ) { isInBound, personItem, rowPosition, columnPosition, isDrag ->
                     LaunchedEffect(
