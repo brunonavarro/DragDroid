@@ -144,7 +144,11 @@ inline fun <reified T, reified K> DragItem(
 }
 
 
-/**ITEM QUE SOPORTA EL SOLTAR ITEM EN SU INTERIOR**/
+/**
+ * [DropItem] composable in charge of containing the column items.
+ * @param modifier is the composable modifier to perform the drop event via the [onGloballyPositioned] and [boundsInWindow] functions.
+ * @param content is the composable parameter of the item container to be dropped.
+ * **/
 @Composable
 inline fun <reified T, reified K> DropItem(
     modifier: Modifier,
@@ -181,7 +185,13 @@ inline fun <reified T, reified K> DropItem(
 }
 
 
-/**ITEM QUE SOPORTA EL SOLTAR ITEM EN SU INTERIOR**/
+/**
+ * [DropItem] composable in charge of containing the column items.
+ * @param modifier is the composable modifier to perform the drop event via the [onGloballyPositioned] and [boundsInWindow] functions.
+ * @param columnIndex is the current column identifier drop.
+ * @param content is the composable parameter of the item container to be dropped.
+ * @see com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
+ * **/
 @Composable
 inline fun <reified T, reified K> DropItem(
     modifier: Modifier,
@@ -232,10 +242,13 @@ inline fun <reified T, reified K> DropItem(
     }
 }
 
-/**DragableScreen no acepta <T,K>
- * para remember en su lugar se deja como Any
- * para acercarlo lo mas posible a generico: only cast to T or K
- * */
+/**
+ * [DraggableScreen] composable in charge of containing all [Drop item][com.nsoft.comunityapp.dragdroid_kt.components.DropItem]
+ * and [Drag Item][com.nsoft.comunityapp.dragdroid_kt.components.DragItem].
+ * @param modifier is the composable modifier to perform the drop event via the [graphicsLayer] and [onGloballyPositioned] functions.
+ * @param content is the composable parameter of the item container to be drag and dropped.
+ * @see com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
+ * **/
 @Composable
 fun DraggableScreen(
     modifier: Modifier = Modifier,

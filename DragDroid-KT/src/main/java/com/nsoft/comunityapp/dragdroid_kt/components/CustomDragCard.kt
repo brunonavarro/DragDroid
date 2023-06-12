@@ -26,12 +26,13 @@ import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
 /**
  * [ColumnDropCard] composable in charge of containing columns and notify row items to composable.
- * @param params is the style params [ColumnParameters StyleParams][ColumnParameters.StyleParams].
- * @param actionParams is the action params [ColumnParameters ActionParams][ColumnParameters.ActionParams].
- * @param header is the body row container composable parameter in charge of allowing you to customize some column parameters. (column header).
- * @param key is the listener for column state changes (around bound or not).
- * @param emptyItem is the body row container composable parameter when row list is empty in charge of allowing you to customize some column parameters. (item data Drop). this parameter have a default value [EmptyDropCard].
- * @param body is the body row container composable parameter in charge of allowing you to customize some column parameters. (item data Drag).
+ * @param [params] is the style params [ColumnParameters StyleParams][ColumnParameters.StyleParams].
+ * @param [actionParams] is the action params [ColumnParameters ActionParams][ColumnParameters.ActionParams].
+ * @param [header] is the body row container composable parameter in charge of allowing you to customize some column parameters. (column header).
+ * @param [key] is the listener for column state changes (around bound or not).
+ * @param [emptyItem] is the body row container composable parameter when row list is empty in charge of allowing you to customize some column parameters.
+ * (item data Drop). this parameter have a default value [EmptyDropCard].
+ * @param [body] is the body row container composable parameter in charge of allowing you to customize some column parameters. (item data Drag).
  * @see com.nsoft.communityapp.draganddrop.MainActivity
  * **/
 @RequiresApi(Build.VERSION_CODES.M)
