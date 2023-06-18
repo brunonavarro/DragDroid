@@ -2,8 +2,8 @@
 
 Este es un proyecto de Libreria en desarrollo
 
-![Descripción de la imagen](https://github.com/brunonavarro/DragDroid/BoardColumn.mp4)
-![Descripción de la imagen](https://github.com/brunonavarro/DragDroid/Single.mp4)
+![Descripción de la imagen](https://github.com/brunonavarro/DragDroid/BoardColumn.gif)
+![Descripción de la imagen](https://github.com/brunonavarro/DragDroid/Single.gif)
 
 ## Implementacion de Dependencia
 ```gradle
