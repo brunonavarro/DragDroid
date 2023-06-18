@@ -37,7 +37,7 @@ fun BoardScreen(
 
 
     val isLoading by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     var stateParams by remember {
