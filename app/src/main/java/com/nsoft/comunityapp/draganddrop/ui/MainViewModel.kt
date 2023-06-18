@@ -9,6 +9,7 @@ import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnPosition
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.RowPosition
+import com.nsoft.comunityapp.dragdroid_kt.interfaces.reOrderList
 
 class MainViewModel: ViewModel() {
 
@@ -19,13 +20,10 @@ class MainViewModel: ViewModel() {
     var taskItems = mutableStateListOf<DragItem>()
         private set
 
-    // Estado para realizar un seguimiento de la tarea actualmente arrastrada
-    var draggedTask = mutableStateOf<DragItem?>(null)
+    var cardItem = mutableStateOf<DragItem?>(null)
         private set
 
-    var isCurrentlyDragging = mutableStateOf(false)
-        private set
-
+    val dropCount = mutableStateOf<Int>(0)
 
     init {
         columnsItems.add(Column.TO_DO)
@@ -35,102 +33,99 @@ class MainViewModel: ViewModel() {
         taskItems.add(
             DragItem(
                 "Michael",
-                id = 0,
+                id = "A1",
                 backgroundColor = Color.DarkGray,
             )
         )
         taskItems.add(
             DragItem(
                 "Larissa",
-                id = 1,
+                id = "B2",
                 backgroundColor = Color.DarkGray,
             )
         )
-        taskItems.add(DragItem("Bruno", 2, Color.DarkGray))
+        taskItems.add(DragItem("Bruno", "D1", Color.DarkGray))
 
     }
 
     fun startDragging(
         item: DragItem,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition<Column>
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
     ) {
-        columnPosition.from
-
-        rowPosition.to
-        rowPosition.from
-
         taskItems.firstOrNull { it == item }?.apply {
             isDraggable = true
         }
-
-        isCurrentlyDragging.value = true
-
-        draggedTask.value = item
 
         Log.e("START DRAG", item.name)
     }
 
     fun endDragging(
         item: DragItem,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition<Column>
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
     ) {
-        columnPosition.from
-
-        rowPosition.to
-        rowPosition.from
-
         taskItems.firstOrNull { it == item }?.apply {
             isDraggable = false
         }
 
-        isCurrentlyDragging.value = false
-
-        draggedTask.value = null
-
         Log.e("END DRAG", item.name)
     }
 
-    fun addPersons(
+    fun updateTasks(
         item: DragItem,
         rowPosition: RowPosition,
         columnPosition: ColumnPosition<Column>
     ) {
-        columnPosition.to
-        columnPosition.from
-
-        val newItems = mutableListOf<DragItem>()
-
-        taskItems.forEachIndexed { index, personUIItem ->
-            if (
-                personUIItem == item
-            ) {
-                Log.e("ADD personUIItem: ", personUIItem.toString())
-                Log.e("ADD item: ", item.toString())
-                Log.e("ADD : ", "----------------------------------")
-                personUIItem.updateItem(item, index, columnPosition, rowPosition)
-                personUIItem.backgroundColor = when (columnPosition.to) {
-                    Column.TO_DO -> {
-                        Color.DarkGray
-                    }
-                    Column.IN_PROGRESS -> {
-                        Color.Blue
-                    }
-                    Column.DEV_DONE -> {
-                        Color.Green
-                    }
-                    else -> {
-                        item.backgroundColor
-                    }
+        taskItems.reOrderList(item)?.let {
+            it.updateItem(columnPosition)
+            it.backgroundColor = when (columnPosition.to) {
+                Column.TO_DO -> {
+                    Color.DarkGray
+                }
+                Column.IN_PROGRESS -> {
+                    Color.Blue
+                }
+                Column.DEV_DONE -> {
+                    Color.Green
+                }
+                else -> {
+                    item.backgroundColor
                 }
             }
-            newItems.add(index, personUIItem)
         }
-        Log.e("ADD NEW LIST: ", newItems.toString())
-        Log.e("ADD : ", "----------------------------------")
-        taskItems.clear()
-        taskItems.addAll(newItems)
+    }
+
+
+    fun updateDroppedList(
+        item: DragItem
+    ) {
+        dropCount.value++
+    }
+
+
+    fun startCardDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        cardItem.value?.apply {
+            isDraggable = true
+        }
+
+        Log.e("START DRAG", item.name)
+    }
+
+    fun endCardDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        cardItem.value?.apply {
+            isDraggable = false
+        }
+
+        Log.e("END DRAG", item.name)
     }
 
 }

@@ -6,15 +6,19 @@
 
 package com.nsoft.comunityapp.dragdroid_kt.interfaces
 
-
-abstract class ItemPositionImpl<K>(
+abstract class PositionImpl<K>(
     override var rowPosition: RowPosition,
     override var columnPosition: ColumnPosition<K>
-) : ItemPosition<K> {
-    abstract fun canAdd(): Boolean
+) : Position<K> {
+
+    open fun getKey() = rowPosition.from ?: 0
+
+    open fun canAdd(): Boolean {
+        return columnPosition.canAdd()
+    }
 }
 
-interface ItemPosition<K> {
+interface Position<K> {
     var rowPosition: RowPosition
     var columnPosition: ColumnPosition<K>
 }
@@ -27,8 +31,15 @@ data class ColumnPosition<K>(
 }
 
 data class RowPosition(
-    var from: Int? = 0,
-    var to: Int? = 0
+    var from: Any? = 0,
+    var to: Any? = 0
 ) {
     fun canAdd() = from != to
+}
+
+fun <T> MutableList<T>.reOrderList(item: T): T? {
+    val index = this.indexOf(item)
+    this.removeAt(index)
+    this.add(index, item)
+    return this.getOrNull(index)
 }
