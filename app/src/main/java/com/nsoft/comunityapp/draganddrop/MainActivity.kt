@@ -5,24 +5,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.nsoft.comunityapp.draganddrop.ui.CustomDragCard
-import com.nsoft.comunityapp.draganddrop.ui.CustomHeaderColumn
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.nsoft.comunityapp.draganddrop.ui.BoardScreen
 import com.nsoft.comunityapp.draganddrop.ui.MainViewModel
-import com.nsoft.comunityapp.draganddrop.ui.entities.Column
-import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
+import com.nsoft.comunityapp.draganddrop.ui.SingleDragDropScreen
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
-import com.nsoft.comunityapp.dragdroid_kt.components.ColumnCard
-import com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
-import com.nsoft.comunityapp.dragdroid_kt.components.DraggableScreen
-import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
 class MainActivity : ComponentActivity() {
 
@@ -34,67 +32,43 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            val rowListByGroup = mainViewModel.taskItems.groupBy { it.column }
-
-            var columnStyleParams by remember {
-                mutableStateOf<ColumnParameters.StyleParams<DragItem, Column>?>(null)
-            }
-            DragAndDropTheme {
-                // A surface container using the 'background' color from the theme
-                DraggableScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(0.8f))
-                ) {
-
-                    Column() {
-                        DragDropScreen(
-                            context = applicationContext,
-                            columnsItems = mainViewModel.columnsItems,
-                            rowListByGroup = rowListByGroup,
-                            updateBoard = { item, row, column ->
-                                mainViewModel.addPersons(item, row, column)
-                            },
-                            callBackColumn = {
-                                columnStyleParams = it
-                            }
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = "main") {
+                composable("main") {
+                    DragAndDropTheme {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            columnStyleParams?.let {
-                                ColumnCard(
-                                    params = it,
-                                    key = { item ->
-                                        item.rowPosition.from as Any
-                                    },
-                                    header = {
-                                        CustomHeaderColumn(
-                                            params = it
-                                        )
-                                    },
-                                    body = { data ->
-                                        CustomDragCard(
-                                            data = data, styleParams = it,
-                                            actionParams = ColumnParameters.ActionParams(
-                                                onStart = { item, row, column ->
-                                                    mainViewModel.startDragging(
-                                                        item,
-                                                        rowPosition = row,
-                                                        columnPosition = column
-                                                    )
-                                                },
-                                                onEnd = { item, row, column ->
-                                                    mainViewModel.endDragging(
-                                                        item,
-                                                        rowPosition = row,
-                                                        columnPosition = column
-                                                    )
-                                                }
-                                            )
-                                        )
-                                    }
-                                )
+                            Button(modifier = Modifier.fillMaxWidth(80f),
+                                onClick = {
+                                    navController.navigate("board")
+                                }) {
+                                Text(text = "BOAR COLUMN DRAG AND DROP")
+                            }
+                            Button(modifier = Modifier.fillMaxWidth(80f),
+                                onClick = {
+                                    navController.navigate("singleDragDrop")
+                                }) {
+                                Text(text = "SINGLE DRAG AND DROP")
                             }
                         }
+                    }
+                }
+                composable("board") {
+                    DragAndDropTheme {
+                        BoardScreen(
+                            applicationContext = applicationContext,
+                            mainViewModel = mainViewModel
+                        )
+                    }
+                }
+                composable("singleDragDrop") {
+                    DragAndDropTheme {
+                        SingleDragDropScreen(
+                            applicationContext = applicationContext,
+                            mainViewModel = mainViewModel
+                        )
                     }
                 }
             }

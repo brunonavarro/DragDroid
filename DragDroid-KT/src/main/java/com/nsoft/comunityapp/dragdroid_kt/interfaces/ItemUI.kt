@@ -9,22 +9,27 @@ package com.nsoft.comunityapp.dragdroid_kt.interfaces
 import androidx.compose.ui.graphics.Color
 
 abstract class ItemUIImpl<T, K>(
-    override var id: Int,
+    override var isDraggable: Boolean,
+    override val id: Any,
     override var column: K, override var backgroundColor: Color
-) : ItemUI<T, K>, ItemPositionImpl<K>(
+) : ItemUI<T, K>, PositionImpl<K>(
     rowPosition = RowPosition(from = id),
     columnPosition = ColumnPosition(from = column)
 ) {
-    abstract fun updateItem(
-        personUIItem: T,
-        index: Int,
-        columnPosition: ColumnPosition<K>,
-        rowPosition: RowPosition
-    )
+
+    open fun updateItem(
+        columnPosition: ColumnPosition<K>
+    ) {
+        columnPosition.to?.let {
+            column = it
+        }
+        isDraggable = false
+    }
 }
 
 sealed interface ItemUI<T, K> {
-    var id: Int
+    var isDraggable: Boolean
+    val id: Any
     var column: K
     var backgroundColor: Color
 }
