@@ -1,7 +1,7 @@
 ## DragAndDropCompose 🚀 <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px">
 
-Este es un proyecto de Libreria enfocado a soluciones de arrastre y soltar.
-Inspirado en: https://github.com/MatthiasKerat/DragAndDropYT
+##### Este es un proyecto de Libreria enfocado a soluciones de arrastre y soltar.
+##### Inspirado en: https://github.com/MatthiasKerat/DragAndDropYT
 
 <table>
     <tr>
@@ -28,7 +28,7 @@ repositories {
     }
 }
 ```
-##Eventos Drag y Drop con diseño de filas y columnas.
+##### Eventos Drag y Drop con diseño de filas y columnas.
 
 Para añadir el componente DragDropScreen y ColumnDropCard compatible con Jetpack Compose
 debemos agregar el siguiente codigo en una funcion @Composable enlazado y lo invocamos en el Activity/Fragment.
@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 ```
-##Eventos Drag y Drop para uso independiente y/o personalizado.
+##### Eventos Drag y Drop para uso independiente y/o personalizado.
 
 Se debe añadir los componentes DraggableScreen, DragItem y DropItem compatible con Jetpack Compose
 debemos agregar el siguiente codigo en una funcion @Composable enlazado y lo invocamos en el Activity/Fragment.
