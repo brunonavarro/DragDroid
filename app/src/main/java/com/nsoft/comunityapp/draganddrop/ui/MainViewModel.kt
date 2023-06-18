@@ -100,7 +100,7 @@ class MainViewModel: ViewModel() {
     fun updateDroppedList(
         item: DragItem
     ) {
-        dropCount.value.plus(1)
+        dropCount.value++
     }
 
 
