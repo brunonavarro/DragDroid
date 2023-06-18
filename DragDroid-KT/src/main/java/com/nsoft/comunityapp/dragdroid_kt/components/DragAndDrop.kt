@@ -145,12 +145,107 @@ inline fun <reified T, reified K> DragItem(
 
 
 /**
+ * [DragItem] composable in charge of containing the items.
+ * @param modifier is the composable modifier to perform the drag event via the [onGloballyPositioned] and [pointerInput] functions.
+ * @param dataToDrop is the data to be dragged into [DropItem] and reported to [DraggableScreen] and then the view model will update the list.
+ * @param vibrator is the added parameter that enables the vibration effect when the drag event is started. Applies to Android versions higher than [Build.VERSION_CODES.M].
+ * @param onStart is the function parameter to notify the drag start event with [detectDragGesturesAfterLongPress].
+ * @param onEnd is the function parameter that allows to notify the drag end event with [detectDragGesturesAfterLongPress].
+ * @param content is the composable parameter of the item container to be dragged.
+ * @see com.nsoft.comunityapp.dragdroid_kt.components.ColumnDropCard
+ * **/
+@RequiresApi(Build.VERSION_CODES.M)
+@Composable
+inline fun <reified T> DragItem(
+    modifier: Modifier = Modifier,
+    dataToDrop: T,
+    vibrator: Vibrator?,
+    crossinline onStart: (item: T) -> Unit?,
+    crossinline onEnd: (item: T) -> Unit?,
+    noinline content: @Composable ((isDrag: Boolean, data: Any?) -> Unit)
+) {
+    var currentPosition by remember {
+        mutableStateOf(Offset.Zero)
+    }
+
+    val currentState = (LocalDragTargetInfo).current
+
+    Box(
+        modifier = modifier
+            .onGloballyPositioned {
+                currentPosition = it.localToWindow(Offset.Zero)
+            }
+            .pointerInput(Unit) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = {
+                        if (vibrator != null) {
+                            val vibrationEffect1: VibrationEffect =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    VibrationEffect.createOneShot(
+                                        200,
+                                        VibrationEffect.CONTENTS_FILE_DESCRIPTOR
+                                    )
+                                } else {
+                                    Log.e("TAG", "Cannot vibrate device..")
+                                    TODO("VERSION.SDK_INT < O")
+                                }
+
+                            // it is safe to cancel other
+                            // vibrations currently taking place
+                            vibrator.cancel()
+                            vibrator.vibrate(vibrationEffect1)
+                        }
+
+                        currentState.dataToDrop = dataToDrop
+                        currentState.isDragging = true
+                        currentState.dragPosition = currentPosition + it
+
+                        currentState.draggableComposable =
+                            content //as @Composable ((Boolean, Any?) -> Unit)?
+
+
+                        onStart(
+                            dataToDrop
+                        )
+
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consumeAllChanges()
+                        currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
+                    },
+                    onDragEnd = {
+                        currentState.dragOffset = Offset.Zero
+                        currentState.isDragging = false
+
+                        onEnd(
+                            dataToDrop
+                        )
+
+                    },
+                    onDragCancel = {
+                        currentState.dragOffset = Offset.Zero
+                        currentState.isDragging = false
+
+
+                        onEnd(
+                            dataToDrop
+                        )
+
+                    }
+                )
+            }
+    ) {
+        content(currentState.isDragging, null)
+    }
+}
+
+/**
  * [DropItem] composable in charge of containing the column items.
  * @param modifier is the composable modifier to perform the drop event via the [onGloballyPositioned] and [boundsInWindow] functions.
  * @param content is the composable parameter of the item container to be dropped.
  * **/
 @Composable
-inline fun <reified T, reified K> DropItem(
+inline fun <reified T> DropItem(
     modifier: Modifier,
     content: @Composable() (BoxScope.(isInBound: Boolean, data: T?) -> Unit)
 ) {

@@ -2,6 +2,7 @@ package com.nsoft.comunityapp.draganddrop.ui
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.nsoft.comunityapp.draganddrop.ui.entities.Column
@@ -18,6 +19,11 @@ class MainViewModel: ViewModel() {
 
     var taskItems = mutableStateListOf<DragItem>()
         private set
+
+    var cardItem = mutableStateOf<DragItem?>(null)
+        private set
+
+    val dropCount = mutableStateOf<Int>(0)
 
     init {
         columnsItems.add(Column.TO_DO)
@@ -44,8 +50,8 @@ class MainViewModel: ViewModel() {
 
     fun startDragging(
         item: DragItem,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition<Column>
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
     ) {
         taskItems.firstOrNull { it == item }?.apply {
             isDraggable = true
@@ -56,8 +62,8 @@ class MainViewModel: ViewModel() {
 
     fun endDragging(
         item: DragItem,
-        rowPosition: RowPosition,
-        columnPosition: ColumnPosition<Column>
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
     ) {
         taskItems.firstOrNull { it == item }?.apply {
             isDraggable = false
@@ -88,6 +94,38 @@ class MainViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+
+    fun updateDroppedList(
+        item: DragItem
+    ) {
+        dropCount.value.plus(1)
+    }
+
+
+    fun startCardDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        cardItem.value?.apply {
+            isDraggable = true
+        }
+
+        Log.e("START DRAG", item.name)
+    }
+
+    fun endCardDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        cardItem.value?.apply {
+            isDraggable = false
+        }
+
+        Log.e("END DRAG", item.name)
     }
 
 }

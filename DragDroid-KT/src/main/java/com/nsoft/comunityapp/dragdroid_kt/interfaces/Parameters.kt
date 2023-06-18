@@ -7,8 +7,10 @@
 package com.nsoft.comunityapp.dragdroid_kt.interfaces
 
 import android.content.Context
+import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 
 /**
  * [ColumnParameters] is the parent class of style and action parameters
@@ -73,5 +75,18 @@ sealed class ColumnParameters<T, K> {
         val onStart: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
         val onEnd: ((item: T, rowPosition: RowPosition, columnPosition: ColumnPosition<K>) -> Unit)? = null,
         val onClick: ((T) -> Unit)? = null
+    ) : ColumnParameters<T, K>()
+
+    /**
+     * [ActionParams] is the action parameters class
+     * @param onStart is the start action of drag  cardView.
+     * @param onEnd is the end action of drag cardView.
+     * @param onClick is the  click action for open cardView.
+     * @see com.nsoft.communityapp.draganddrop.MainActivity
+     * */
+    data class LoadingParams<T, K>(
+        val isLoading: Boolean = false,
+        val colorStroke: Color = Color.Black,
+        val strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth,
     ) : ColumnParameters<T, K>()
 }

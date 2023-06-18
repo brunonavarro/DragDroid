@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -40,6 +42,7 @@ import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 inline fun <reified T, reified K> ColumnDropCard(
     params: ColumnParameters.StyleParams<T, K>,
     actionParams: ColumnParameters.ActionParams<T, K>,
+    loadingParams: ColumnParameters.LoadingParams<T, K>,
     header: @Composable () -> Unit,
     noinline key: (T) -> Any,
     crossinline emptyItem: @Composable () -> Unit = { EmptyDropCard(params) },
@@ -50,39 +53,62 @@ inline fun <reified T, reified K> ColumnDropCard(
         // Encabezado de estado
         header.invoke()
         Divider()
-        if (params.rowList.isNullOrEmpty()) {
-            emptyItem.invoke()
-        } else {
-            val vibrator =
-                params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            LazyColumn(
-                modifier = params.modifier
+
+        if (loadingParams.isLoading) {
+            Box(
+                Modifier
+                    .background(Color.White)
+                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                    .height(Dp((params.screenHeight ?: 0) / 6f))
+                    .padding(8.dp)
+                    .then(params.modifier)
             ) {
-                items(items = params.rowList, key = key) { data ->
-                    // Elemento de tarjeta de tarea
-                    val index = params.rowList.indexOf(data)
-                    actionParams.onStart?.let { onStart ->
-                        actionParams.onEnd?.let { onEnd ->
-                            params.idColumn?.let { idColumn ->
-                                DragItem(
-                                    rowIndex = index,
-                                    columnIndex = idColumn,
-                                    dataToDrop = data,
-                                    vibrator = vibrator,
-                                    onStart = onStart,
-                                    onEnd = onEnd
-                                ) { isDrag, dataMoved ->
-                                    if (isDrag && data == dataMoved) {
-                                        Box(
-                                            Modifier
-                                                .background(Color.White)
-                                                .width(Dp((params.screenWidth ?: 0) / 2.1f))
-                                                .height(Dp((params.screenHeight ?: 0) / 6f))
-                                                .padding(8.dp)
-                                                .shadow(0.dp, RoundedCornerShape(15.dp))
-                                        )
-                                    } else {
-                                        body.invoke(data)
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(20.dp)
+                        .size(80.dp)
+                        .align(Alignment.Center)
+                        .then(params.modifier),
+                    color = loadingParams.colorStroke,
+                    strokeWidth = loadingParams.strokeWidth
+                )
+            }
+        } else {
+            if (params.rowList.isNullOrEmpty()) {
+                emptyItem.invoke()
+            } else {
+                val vibrator =
+                    params.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                LazyColumn(
+                    modifier = params.modifier
+                ) {
+                    items(items = params.rowList, key = key) { data ->
+                        // Elemento de tarjeta de tarea
+                        val index = params.rowList.indexOf(data)
+                        actionParams.onStart?.let { onStart ->
+                            actionParams.onEnd?.let { onEnd ->
+                                params.idColumn?.let { idColumn ->
+                                    DragItem(
+                                        rowIndex = index,
+                                        columnIndex = idColumn,
+                                        dataToDrop = data,
+                                        vibrator = vibrator,
+                                        onStart = onStart,
+                                        onEnd = onEnd
+                                    ) { isDrag, dataMoved ->
+                                        if (isDrag && data == dataMoved) {
+                                            Box(
+                                                Modifier
+                                                    .background(Color.White)
+                                                    .width(Dp((params.screenWidth ?: 0) / 2.1f))
+                                                    .height(Dp((params.screenHeight ?: 0) / 6f))
+                                                    .padding(8.dp)
+                                                    .shadow(0.dp, RoundedCornerShape(15.dp))
+                                            )
+                                        } else {
+                                            body.invoke(data)
+                                        }
                                     }
                                 }
                             }

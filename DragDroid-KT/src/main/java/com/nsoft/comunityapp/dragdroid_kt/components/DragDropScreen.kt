@@ -72,6 +72,7 @@ inline fun <reified T, reified K : Any> DragDropScreen(
                         key2 = isInBound && !isDrag && columnPosition.canAdd()
                     ) {
                         if (isInBound && !isDrag && columnPosition.canAdd() && personItem != null) {
+
                             updateBoard(
                                 personItem,
                                 rowPosition,
