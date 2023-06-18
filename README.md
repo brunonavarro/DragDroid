@@ -2,10 +2,19 @@
 
 Este es un proyecto de Libreria en desarrollo
 
-![Descripción de la imagen](https://github.com/brunonavarro/DragDroid/BoardColumn.gif)
-![Descripción de la imagen](https://github.com/brunonavarro/DragDroid/Single.gif)
+<table>
+    <tr>
+<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/BoardColumn.gif" width="400" height="600" /></td>
 
+<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/Single.gif" width="400" height="600" /></td>
+    </tr>
+</table>
+    
 ## Implementacion de Dependencia
+```gradle
+/**Last Version*/
+def version = '1.0.0'
+```
 ```gradle
 implementation 'com.github.brunonavarro:DragDroid:1.0.0'
 ```
