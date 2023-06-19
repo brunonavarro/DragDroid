@@ -1,6 +1,6 @@
 ## DragAndDropCompose 🚀 <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px">
 
-![GitHub](https://img.shields.io/github/license/brunonavarro/DragDroid) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![](https://jitpack.io/v/brunonavarro/DragDroid.svg)](https://jitpack.io/#brunonavarro/DragDroid)
 ![GitHub all releases](https://img.shields.io/github/downloads/brunonavarro/DragDroid/total)
 ![GitHub release (by tag)](https://img.shields.io/github/downloads/brunonavarro/DragDroid/1.0.0/total)
