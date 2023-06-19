@@ -32,20 +32,43 @@ class MainViewModel: ViewModel() {
 
         taskItems.add(
             DragItem(
-                "Michael",
+                "Task",
                 id = "A1",
                 backgroundColor = Color.DarkGray,
             )
         )
         taskItems.add(
             DragItem(
-                "Larissa",
+                "Task",
                 id = "B2",
                 backgroundColor = Color.DarkGray,
             )
         )
-        taskItems.add(DragItem("Bruno", "D1", Color.DarkGray))
-
+        taskItems.add(DragItem("Task", "D1", Color.DarkGray))
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B3",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "B4", Color.DarkGray))
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B5",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "B6", Color.DarkGray))
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B7",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "B8", Color.DarkGray))
     }
 
     fun startDragging(
