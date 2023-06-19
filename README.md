@@ -1,5 +1,16 @@
 ## DragAndDropCompose 🚀 <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px">
 
+![GitHub](https://img.shields.io/github/license/brunonavarro/DragDroid)
+[![](https://jitpack.io/v/brunonavarro/DragDroid.svg)](https://jitpack.io/#brunonavarro/DragDroid)
+![GitHub all releases](https://img.shields.io/github/downloads/brunonavarro/DragDroid/total)
+![GitHub release (by tag)](https://img.shields.io/github/downloads/brunonavarro/DragDroid/1.0.0/total)
+
+
+[![issues](https://img.shields.io/github/issues/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/issues)
+[![pull requests](https://img.shields.io/github/issues-pr/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/pulls)
+[![contributors](https://img.shields.io/github/contributors/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/graphs/contributors)
+
+
 ##### Este es un proyecto de Libreria enfocado a soluciones de arrastre y soltar.
 ##### Inspirado en: https://github.com/MatthiasKerat/DragAndDropYT
 
