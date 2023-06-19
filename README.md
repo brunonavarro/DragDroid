@@ -16,9 +16,9 @@
 
 <table>
     <tr>
-<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/BoardColumn.gif" width="400" height="600" /></td>
+<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/BoardColumn.gif" width="300" height="500" /></td>
 
-<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/Single.gif" width="400" height="600" /></td>
+<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/Single.gif" width="300" height="500" /></td>
     </tr>
 </table>
     
