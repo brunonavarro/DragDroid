@@ -13,3 +13,13 @@
 ### Accede a la documentacion en Español: [Guia de Inicio Rapido](https://github.com/brunonavarro/DragDroid/blob/master/docs/README_es.md)
 
 ### Access the documentation in English: [Quick Start Guide](https://github.com/brunonavarro/DragDroid/blob/master/docs/README_en.md)
+
+---
+
+![image](https://github.com/brunonavarro/DragDroid/assets/25406162/2337a4b3-3aee-4961-b527-e63acbf75750)
+
+![image](https://github.com/brunonavarro/DragDroid/assets/25406162/22492b08-3314-43ef-9bff-758670e179d1)
+
+![image](https://github.com/brunonavarro/DragDroid/assets/25406162/b670f051-0173-4687-8de4-79f6e54bf7a6)
+
+
