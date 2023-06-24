@@ -11,16 +11,27 @@
 [![contributors](https://img.shields.io/github/contributors/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/graphs/contributors)
 
 
-##### Este es un proyecto de Libreria enfocado a soluciones de arrastre y soltar.
+> #### Jetpack Compose es el kit de herramientas moderno de Android para compilar IU nativas. Simplifica y acelera el desarrollo de la IU en Android. Haz que tu app cobre vida rápidamente con menos código, herramientas potentes y APIs intuitivas de Kotlin.
+> #### Este es un proyecto de Libreria enfocado a soluciones Mobile Android que involucren eventos de Arrastrar y soltar. Cuyo máximo alcance es como administrador de actividades o lista de tareas. Todo desarrollado con Jetpack Compose.
+>   — Bruno Navarro
+
+##### Con DragDroid, puedes construir aplicaciones que requieran planificar proyectos, listando las tareas por hacer, cambiar sus estados al terminarlas y celebrar el exito de tus proyectos.
+##### De esta forma podras llevar un control de tus proyectos.
+
+##### DragDroid, no es exclusivo para aplicaciones de control de proyectos. Tambien puedes diseñas tus propias ideas de uso.
+
 ##### Inspirado en: https://github.com/MatthiasKerat/DragAndDropYT
 
 <table>
     <tr>
-<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/BoardColumn.gif" width="400" height="600" /></td>
+<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/BoardColumn.gif" width="300" height="500" /></td>
 
-<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/Single.gif" width="400" height="600" /></td>
+<td><img src="https://github.com/brunonavarro/DragDroid/blob/master/Single.gif" width="300" height="500" /></td>
     </tr>
 </table>
+    
+## Ver ejemplo de inicio rapido: [SimpleExample](https://github.com/brunonavarro/DragDroid/blob/SimpleExample/app/src/main/java/com/nsoft/comunityapp/draganddrop/MainActivity.kt)
+## Si aun no has iniciado en el desarrollo con Jetpack Compose puedes acceder a la documentación de inicio rapido aquí: [Inicio Rapido Jetpack Compose](https://developer.android.com/jetpack/compose/setup?hl=es-419)
     
 ## Implementacion de Dependencia
 ```gradle
@@ -45,13 +56,18 @@ Para añadir el componente DragDropScreen y ColumnDropCard compatible con Jetpac
 debemos agregar el siguiente codigo en una funcion @Composable enlazado y lo invocamos en el Activity/Fragment.
 
 ```kotlin
+/**
+ * Composable Screen of dashboard for administration of tasks.
+ * @see updateTasks
+ * @see startDragging
+ * @see endDragging
+ * */
 @Composable
 fun BoardScreen(
-    applicationContext: Context,
-    mainViewModel: MainViewModel
+    rowColumnData: RowColumnData
 ) {
     val groupTasks =
-        mainViewModel.taskItems.filter { !it.isDraggable }.groupBy { it.column }
+        rowColumnData.taskItems.filter { !it.isDraggable }.groupBy { it.column }
 
 
     val isLoading by remember {
@@ -63,18 +79,18 @@ fun BoardScreen(
     }
     Column {
         DragDropScreen(
-            context = applicationContext,
-            columnsItems = mainViewModel.columnsItems,
+            context = LocalContext.current,
+            columnsItems = rowColumnData.columnsItems,
             groupTasks = groupTasks,
-            updateBoard = mainViewModel::updateTasks,
+            updateBoard = rowColumnData.updateTasks,
             stateListener = { stateParams = it }
         ) {
             stateParams?.let { styleParams ->
                 ColumnDropCard(
                     params = styleParams,
                     actionParams = ColumnParameters.ActionParams(
-                        onStart = mainViewModel::startDragging,
-                        onEnd = mainViewModel::endDragging
+                        onStart = rowColumnData.startDragging,
+                        onEnd = rowColumnData.endDragging
                     ),
                     loadingParams = ColumnParameters.LoadingParams(
                         isLoading = isLoading,
@@ -111,35 +127,159 @@ fun BoardScreen(
 ```kotlin
 class MainActivity : ComponentActivity() {
 
-    val mainViewModel = MainViewModel()
+    var columnsItems = mutableStateListOf<Column>()
+        private set
+
+    var taskItems = mutableStateListOf<DragItem>()
+        private set
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initData()
+        val rowColumnData = RowColumnData(
+            columnsItems = columnsItems,
+            taskItems = taskItems,
+            updateTasks = ::updateTasks,
+            startDragging = ::startDragging,
+            endDragging = ::endDragging
+        )
         setContent {
             ...
             DragAndDropTheme {
                 BoardScreen(
-                    applicationContext = applicationContext,
-                    mainViewModel = mainViewModel
+                    rowColumnData = rowColumnData
                 )
             }
         }
     }
+
+    private fun initData(){
+        /**Columns Data*/
+        columnsItems.add(Column.TO_DO)
+        columnsItems.add(Column.IN_PROGRESS)
+        columnsItems.add(Column.DEV_DONE)
+
+        /**Task Data*/
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "A1",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B2",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "D1", Color.DarkGray))
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B3",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "B4", Color.DarkGray))
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B5",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "B6", Color.DarkGray))
+        taskItems.add(
+            DragItem(
+                "Task",
+                id = "B7",
+                backgroundColor = Color.DarkGray,
+            )
+        )
+        taskItems.add(DragItem("Task", "B8", Color.DarkGray))
+    }
+
+    /**FUNCIONES PARA USAR en
+     * @see BoardScreen*/
+    fun startDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        taskItems.firstOrNull { it == item }?.apply {
+            isDraggable = true
+        }
+
+        Log.e("START DRAG", item.name)
+    }
+
+    fun endDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        taskItems.firstOrNull { it == item }?.apply {
+            isDraggable = false
+        }
+
+        Log.e("END DRAG", item.name)
+    }
+
+    fun updateTasks(
+        item: DragItem,
+        rowPosition: RowPosition,
+        columnPosition: ColumnPosition<Column>
+    ) {
+        taskItems.reOrderList(item)?.let {
+            it.updateItem(columnPosition)
+            it.backgroundColor = when (columnPosition.to) {
+                Column.TO_DO -> {
+                    Color.DarkGray
+                }
+                Column.IN_PROGRESS -> {
+                    Color.Blue
+                }
+                Column.DEV_DONE -> {
+                    Color.Green
+                }
+                else -> {
+                    item.backgroundColor
+                }
+            }
+        }
+    }
 }
+```
+```kotlin
+data class RowColumnData(
+    val columnsItems: List<Column>,
+    val taskItems: List<DragItem>,
+    val updateTasks: (DragItem, RowPosition, ColumnPosition<Column>) -> Unit,
+    val startDragging: (DragItem, RowPosition, ColumnPosition<Column>) -> Unit,
+    val endDragging: (DragItem, RowPosition, ColumnPosition<Column>) -> Unit
+)
 ```
 ##### Eventos Drag y Drop para uso independiente y/o personalizado.
 
 Se debe añadir los componentes DraggableScreen, DragItem y DropItem compatible con Jetpack Compose
 debemos agregar el siguiente codigo en una funcion @Composable enlazado y lo invocamos en el Activity/Fragment.
 ```kotlin
+/**
+ * composable for custom functional design.
+ * @see updateDroppedList
+ * @see startCardDragging
+ * @see endCardDragging
+ * */
 @Composable
 fun SingleDragDropScreen(
-    applicationContext: Context,
-    mainViewModel: MainViewModel
+    simpleData: SimpleData
 ) {
-    val count = remember(key1 = mainViewModel.dropCount.value) {
-        mainViewModel.dropCount.value
+
+    val count = remember(key1 = simpleData.dropCount.value) {
+        simpleData.dropCount.value
     }
 
     Column {
@@ -151,23 +291,30 @@ fun SingleDragDropScreen(
         ) {
             val data = DragItem("DRAG", id = "01", backgroundColor = Color.Cyan)
 
+            /** Composable for contains your Drag item and drop
+             * @see DraggableScreen
+             * */
             DraggableScreen(
                 Modifier
                     .fillMaxWidth()
                     .background(Color.White.copy(0.8f))
             ) {
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    /** Composable for event Drag your item
+                     * @see DragItem
+                     * */
                     DragItem<DragItem>(
                         modifier = Modifier
                             .size(200.dp),
                         dataToDrop = data,
                         vibrator = null,
-                        onStart = { mainViewModel.startCardDragging(it) },
-                        onEnd = { mainViewModel.endCardDragging(it) }
+                        onStart = { simpleData.startCardDragging(it) },
+                        onEnd = { simpleData.endCardDragging(it) }
                     ) { it, dataMoved ->
                         Box(
                             Modifier
@@ -180,6 +327,9 @@ fun SingleDragDropScreen(
                         }
                     }
 
+                    /** Drop your item
+                     * @see DropItem
+                     * */
                     DropItem<DragItem>(
                         modifier = Modifier
                             .size(200.dp)
@@ -189,7 +339,7 @@ fun SingleDragDropScreen(
                             key2 = isBound
                         ) {
                             if (isBound && data != null) {
-                                mainViewModel.updateDroppedList(
+                                simpleData.updateDroppedList(
                                     data
                                 )
                             }
@@ -210,6 +360,7 @@ fun SingleDragDropScreen(
                             ) {
                                 Text(text = "DROP HEAR!!...")
                             }
+
                         } else {
                             Box(
                                 Modifier
@@ -226,6 +377,7 @@ fun SingleDragDropScreen(
             }
 
         }
+
 
         Divider(
             Modifier
@@ -247,26 +399,65 @@ fun SingleDragDropScreen(
                 )
             }
         }
+
     }
 }
 ```
 ```kotlin
 class MainActivity : ComponentActivity() {
 
-    val mainViewModel = MainViewModel()
+    val dropCount = mutableStateOf<Int>(0)
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val simpleData = SimpleData(
+            dropCount = dropCount,
+            updateDroppedList = ::updateDroppedList,
+            startCardDragging = ::startCardDragging,
+            endCardDragging = ::endCardDragging
+        )
         setContent {
             ...
             DragAndDropTheme {
                 SingleDragDropScreen(
-                    applicationContext = applicationContext,
-                    mainViewModel = mainViewModel
+                    simpleData = simpleData
                 )
             }
         }
     }
+
+    /**FUNCIONES PARA USAR en
+     * @see SimpleDragDropScreen*/
+    fun updateDroppedList(
+        item: DragItem
+    ) {
+        dropCount.value++
+    }
+
+    fun startCardDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+
+        Log.e("START DRAG", item.name)
+    }
+
+    fun endCardDragging(
+        item: DragItem,
+        rowPosition: RowPosition? = null,
+        columnPosition: ColumnPosition<Column>? = null
+    ) {
+        Log.e("END DRAG", item.name)
+    }
 }
+```
+```kotlin
+data class SimpleData(
+    val dropCount: MutableState<Int>,
+    val updateDroppedList: (DragItem) -> Unit,
+    val startCardDragging: (DragItem) -> Unit,
+    val endCardDragging: (DragItem) -> Unit
+)
 ```
