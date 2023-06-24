@@ -10,6 +10,6 @@
 [![pull requests](https://img.shields.io/github/issues-pr/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/pulls)
 [![contributors](https://img.shields.io/github/contributors/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/graphs/contributors)
 
-### Accede a la documentacion en Español: [Guia de Inicio Rapido](https://github.com/brunonavarro/DragDroid/blob/master/README_es.md)
+### Accede a la documentacion en Español: [Guia de Inicio Rapido](https://github.com/brunonavarro/DragDroid/blob/master/docs/README_es.md)
 
-### Access the documentation in English: [Quick Start Guide](https://github.com/brunonavarro/DragDroid/blob/master/README_en.md)
+### Access the documentation in English: [Quick Start Guide](https://github.com/brunonavarro/DragDroid/blob/master/docs/README_en.md)
