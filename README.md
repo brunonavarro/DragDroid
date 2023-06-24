@@ -11,7 +11,15 @@
 [![contributors](https://img.shields.io/github/contributors/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/graphs/contributors)
 
 
-##### Este es un proyecto de Libreria enfocado a soluciones de arrastre y soltar.
+> #### Jetpack Compose es el kit de herramientas moderno de Android para compilar IU nativas. Simplifica y acelera el desarrollo de la IU en Android. Haz que tu app cobre vida rápidamente con menos código, herramientas potentes y APIs intuitivas de Kotlin.
+> #### Este es un proyecto de Libreria enfocado a soluciones Mobile Android que involucren eventos de Arrastrar y soltar. Cuyo máximo alcance es como administrador de actividades o lista de tareas. Todo desarrollado con Jetpack Compose.
+>   — Bruno Navarro
+
+##### Con DragDroid, puedes construir aplicaciones que requieran planificar proyectos, listando las tareas por hacer, cambiar sus estados al terminarlas y celebrar el exito de tus proyectos.
+##### De esta forma podras llevar un control de tus proyectos.
+
+##### DragDroid, no es exclusivo para aplicaciones de control de proyectos. Tambien puedes diseñas tus propias ideas de uso.
+
 ##### Inspirado en: https://github.com/MatthiasKerat/DragAndDropYT
 
 <table>
@@ -23,6 +31,7 @@
 </table>
     
 ## Ver ejemplo de inicio rapido: [SimpleExample](https://github.com/brunonavarro/DragDroid/blob/SimpleExample/app/src/main/java/com/nsoft/comunityapp/draganddrop/MainActivity.kt)
+## Si aun no has iniciado en el desarrollo con Jetpack Compose puedes acceder a la documentación de inicio rapido aquí: [Inicio Rapido Jetpack Compose](https://developer.android.com/jetpack/compose/setup?hl=es-419)
     
 ## Implementacion de Dependencia
 ```gradle
