@@ -257,7 +257,7 @@ Se debe añadir los componentes DraggableScreen, DragItem y DropItem compatible 
 debemos agregar el siguiente codigo en una funcion @Composable enlazado y lo invocamos en el Activity/Fragment.
 ```kotlin
 /**
- * Composable Screen for design functional personalize
+ * composable for custom functional design.
  * @see updateDroppedList
  * @see startCardDragging
  * @see endCardDragging
