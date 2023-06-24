@@ -6,7 +6,6 @@
 
 package com.nsoft.comunityapp.draganddrop.ui
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -26,20 +25,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nsoft.comunityapp.draganddrop.SimpleData
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.dragdroid_kt.components.DragItem
 import com.nsoft.comunityapp.dragdroid_kt.components.DraggableScreen
 import com.nsoft.comunityapp.dragdroid_kt.components.DropItem
 
-
+/**
+ * Composable Screen for design functional personalize
+ * @see updateDroppedList
+ * @see startCardDragging
+ * @see endCardDragging
+ * */
 @Composable
 fun SingleDragDropScreen(
-    applicationContext: Context,
-    mainViewModel: MainViewModel
+    simpleData: SimpleData
 ) {
 
-    val count = remember(key1 = mainViewModel.dropCount.value) {
-        mainViewModel.dropCount.value
+    val count = remember(key1 = simpleData.dropCount.value) {
+        simpleData.dropCount.value
     }
 
     Column {
@@ -51,6 +55,9 @@ fun SingleDragDropScreen(
         ) {
             val data = DragItem("DRAG", id = "01", backgroundColor = Color.Cyan)
 
+            /** Composable for contains your Drag item and drop
+             * @see DraggableScreen
+             * */
             DraggableScreen(
                 Modifier
                     .fillMaxWidth()
@@ -62,13 +69,16 @@ fun SingleDragDropScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    /** Composable for event Drag your item
+                     * @see DragItem
+                     * */
                     DragItem<DragItem>(
                         modifier = Modifier
                             .size(200.dp),
                         dataToDrop = data,
                         vibrator = null,
-                        onStart = { mainViewModel.startCardDragging(it) },
-                        onEnd = { mainViewModel.endCardDragging(it) }
+                        onStart = { simpleData.startCardDragging(it) },
+                        onEnd = { simpleData.endCardDragging(it) }
                     ) { it, dataMoved ->
                         Box(
                             Modifier
@@ -81,6 +91,9 @@ fun SingleDragDropScreen(
                         }
                     }
 
+                    /** Drop your item
+                     * @see DropItem
+                     * */
                     DropItem<DragItem>(
                         modifier = Modifier
                             .size(200.dp)
@@ -90,7 +103,7 @@ fun SingleDragDropScreen(
                             key2 = isBound
                         ) {
                             if (isBound && data != null) {
-                                mainViewModel.updateDroppedList(
+                                simpleData.updateDroppedList(
                                     data
                                 )
                             }

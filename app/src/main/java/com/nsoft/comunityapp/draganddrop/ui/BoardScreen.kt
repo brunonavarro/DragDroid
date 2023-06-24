@@ -6,14 +6,15 @@
 
 package com.nsoft.comunityapp.draganddrop.ui
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nsoft.comunityapp.draganddrop.RowColumnData
 import com.nsoft.comunityapp.draganddrop.ui.entities.Column
 import com.nsoft.comunityapp.draganddrop.ui.entities.DragItem
 import com.nsoft.comunityapp.draganddrop.ui.theme.DragAndDropTheme
@@ -21,14 +22,18 @@ import com.nsoft.comunityapp.dragdroid_kt.components.ColumnDropCard
 import com.nsoft.comunityapp.dragdroid_kt.components.DragDropScreen
 import com.nsoft.comunityapp.dragdroid_kt.interfaces.ColumnParameters
 
-
+/**
+ * Composable Screen of dashboard for administration of tasks.
+ * @see updateTasks
+ * @see startDragging
+ * @see endDragging
+ * */
 @Composable
 fun BoardScreen(
-    applicationContext: Context,
-    mainViewModel: MainViewModel
+    rowColumnData: RowColumnData
 ) {
     val groupTasks =
-        mainViewModel.taskItems.filter { !it.isDraggable }.groupBy { it.column }
+        rowColumnData.taskItems.filter { !it.isDraggable }.groupBy { it.column }
 
 
     val isLoading by remember {
@@ -40,18 +45,18 @@ fun BoardScreen(
     }
     Column {
         DragDropScreen(
-            context = applicationContext,
-            columnsItems = mainViewModel.columnsItems,
+            context = LocalContext.current,
+            columnsItems = rowColumnData.columnsItems,
             groupTasks = groupTasks,
-            updateBoard = mainViewModel::updateTasks,
+            updateBoard = rowColumnData.updateTasks,
             stateListener = { stateParams = it }
         ) {
             stateParams?.let { styleParams ->
                 ColumnDropCard(
                     params = styleParams,
                     actionParams = ColumnParameters.ActionParams(
-                        onStart = mainViewModel::startDragging,
-                        onEnd = mainViewModel::endDragging
+                        onStart = rowColumnData.startDragging,
+                        onEnd = rowColumnData.endDragging
                     ),
                     loadingParams = ColumnParameters.LoadingParams(
                         isLoading = isLoading,
