@@ -45,13 +45,18 @@ Para añadir el componente DragDropScreen y ColumnDropCard compatible con Jetpac
 debemos agregar el siguiente codigo en una funcion @Composable enlazado y lo invocamos en el Activity/Fragment.
 
 ```kotlin
+/**
+ * Composable Screen of dashboard for administration of tasks.
+ * @see updateTasks
+ * @see startDragging
+ * @see endDragging
+ * */
 @Composable
 fun BoardScreen(
-    applicationContext: Context,
-    mainViewModel: MainViewModel
+    rowColumnData: RowColumnData
 ) {
     val groupTasks =
-        mainViewModel.taskItems.filter { !it.isDraggable }.groupBy { it.column }
+        rowColumnData.taskItems.filter { !it.isDraggable }.groupBy { it.column }
 
 
     val isLoading by remember {
@@ -63,18 +68,18 @@ fun BoardScreen(
     }
     Column {
         DragDropScreen(
-            context = applicationContext,
-            columnsItems = mainViewModel.columnsItems,
+            context = LocalContext.current,
+            columnsItems = rowColumnData.columnsItems,
             groupTasks = groupTasks,
-            updateBoard = mainViewModel::updateTasks,
+            updateBoard = rowColumnData.updateTasks,
             stateListener = { stateParams = it }
         ) {
             stateParams?.let { styleParams ->
                 ColumnDropCard(
                     params = styleParams,
                     actionParams = ColumnParameters.ActionParams(
-                        onStart = mainViewModel::startDragging,
-                        onEnd = mainViewModel::endDragging
+                        onStart = rowColumnData.startDragging,
+                        onEnd = rowColumnData.endDragging
                     ),
                     loadingParams = ColumnParameters.LoadingParams(
                         isLoading = isLoading,
