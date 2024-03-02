@@ -10,7 +10,7 @@
 [![pull requests](https://img.shields.io/github/issues-pr/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/pulls)
 [![contributors](https://img.shields.io/github/contributors/brunonavarro/DragDroid?style=for-the-badge)](https://github.com/brunonavarro/DragDroid/graphs/contributors)
 
-## :loudspeaker: **¡Nos encantaría conocer tu opinión! Proporciona feedback [Aquí](https://github.com/brunonavarro/DragDroid/tree/17110e473cd2b4d721654dfb2f82013c67f209ff/.github/ISSUE_TEMPLATE/feedback-de-la-libreria-dragdroid.md)** :loudspeaker:
+## :loudspeaker: **¡Nos encantaría conocer tu opinión! Proporciona feedback [Aquí](https://github.com/brunonavarro/DragDroid/issues/new?assignees=brunonavarro&labels=feedback&projects=&template=feedback-de-la-libreria-dragdroid.md&title=%5BFEEDBACK%5D)** :loudspeaker:
  
 
 ### Accede a la documentacion en Español: [Guia de Inicio Rapido](https://github.com/brunonavarro/DragDroid/blob/master/docs/README_es.md)
