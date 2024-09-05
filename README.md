@@ -1,4 +1,4 @@
-## DragAndDropCompose 🚀 <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px">
+## DragDroid 🚀 <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="30px">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![](https://jitpack.io/v/brunonavarro/DragDroid.svg)](https://jitpack.io/#brunonavarro/DragDroid)
