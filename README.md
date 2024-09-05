@@ -19,6 +19,9 @@
 
  
 ---
+![image](https://github.com/user-attachments/assets/b47f246b-a5ac-4db2-9ae8-5641b316f7e7) ![image](https://github.com/user-attachments/assets/ec06d906-2430-4a70-9538-5634b3b97c48)
+
+---
 
 ![image](https://github.com/brunonavarro/DragDroid/assets/25406162/2976dd66-f085-48bc-97a4-514b2679acec)
 
